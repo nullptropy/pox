@@ -20,6 +20,11 @@ TokenType = Enum('TokenType', '''\
     EOF\
 ''')
 
+# this depends on all of the keywords being back to back
+# and taking values in the range `[23, 39)`
+RESERVED_KEYWORDS = {
+    TokenType(n).name.lower(): TokenType(n) for n in range(23, 39)}
+
 class Token:
     def __init__(self, type: TokenType, lexeme: str, literal: Any, line: int):
         self.type = type
