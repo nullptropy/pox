@@ -50,13 +50,15 @@ class Scanner:
 
             case ' ' | '\r' | '\t': pass
             case '\n': self.line += 1
-
             case '/':
                 if not self.match('/'):
                     return Ok(self.make_token(TokenType.SLASH))
 
-                while (self.peek() != '\n' and not self.is_at_end()):
+                while self.peek() not in ['\0', '\n']:
                     self.advance()
+
+            case '\'' | '"':
+                return self.scan_string(c)
 
             case _:
                 return Err(f'{self.line} | unexpected character: {repr(c)}')
@@ -77,10 +79,7 @@ class Scanner:
         return self.source[self.current]
 
     def match(self, expected: str) -> bool:
-        if self.is_at_end():
-            return False
-
-        if self.source[self.current] != expected:
+        if self.is_at_end() or self.source[self.current] != expected:
             return False
 
         self.current += 1
@@ -88,3 +87,17 @@ class Scanner:
 
     def make_token(self, type, literal=None) -> Token:
         return Token(type, self.source[self.start:self.current], literal, self.line)
+
+    def scan_string(self, quote: str) -> Result[Token, str] | None:
+        while self.peek() not in ['\0', quote]:
+            if self.peek() == '\n':
+                self.line += 1
+
+            self.advance()
+
+        if self.is_at_end():
+            return Err(f'{self.line} | unterminated string')
+
+        self.advance()
+
+        return Ok(self.make_token(TokenType.STRING, self.source[self.start + 1:self.current - 1]))
