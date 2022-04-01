@@ -3,6 +3,8 @@
 from .token import Token, TokenType
 from result import Ok, Err, Result
 
+from pox.utils import build_syntax_error, decode_escapes
+
 class Scanner:
     line = 1
     start = 0
@@ -61,7 +63,7 @@ class Scanner:
                 return self.scan_string(c)
 
             case _:
-                return Err(f'{self.line} | unexpected character: {repr(c)}')
+                return Err(build_syntax_error(self.line, f'unexpected character: {repr(c)}'))
 
     def is_at_end(self) -> bool:
         return self.current >= len(self.source)
@@ -96,8 +98,10 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            return Err(f'{self.line} | unterminated string')
+            return Err(build_syntax_error(self.line, 'unterminated string'))
 
         self.advance()
 
-        return Ok(self.make_token(TokenType.STRING, self.source[self.start + 1:self.current - 1]))
+        return Ok(self.make_token(
+            TokenType.STRING,
+            decode_escapes(self.source[self.start + 1:self.current - 1])))

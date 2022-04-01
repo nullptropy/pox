@@ -2,10 +2,8 @@
 
 import sys
 
-from .utils import error
-from .scanner import Token, Scanner
-
 from result import Ok, Err 
+from .scanner import Token, Scanner
 
 class Pox:
     def __init__(self):
@@ -41,7 +39,7 @@ class Pox:
                     tokens.append(token)
                 case Err(message):
                     self.error_occured = True
-                    print(error.build_syntax_error(message))
+                    print(message)
 
         return tokens
 
