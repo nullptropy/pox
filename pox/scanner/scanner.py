@@ -40,6 +40,7 @@ class Scanner:
             case '+': return Ok(self.make_token(TokenType.PLUS))
             case '-': return Ok(self.make_token(TokenType.MINUS))
             case '*': return Ok(self.make_token(TokenType.STAR))
+            case ';': return Ok(self.make_token(TokenType.SEMICOLON))
 
             case '=':
                 return Ok(self.make_token(TokenType.EQUAL_EQUAL if self.match('=') else TokenType.EQUAL))
@@ -53,11 +54,12 @@ class Scanner:
             case ' ' | '\r' | '\t': pass
             case '\n': self.line += 1
             case '/':
-                if not self.match('/'):
+                if not self.match('/', '*'):
                     return Ok(self.make_token(TokenType.SLASH))
 
-                while self.peek() not in ['\0', '\n']:
-                    self.advance()
+                match self.scan_comment(self.source[self.current - 1]):
+                    case Err(error):
+                        return Err(error)
 
             case '\'' | '"': return self.scan_string(c)
             case c if c.isdigit(): return self.scan_number()
@@ -81,8 +83,8 @@ class Scanner:
 
         return self.source[self.current + n - 1]
 
-    def match(self, expected: str) -> bool:
-        if self.is_at_end() or self.source[self.current] != expected:
+    def match(self, *expected) -> bool:
+        if self.is_at_end() or self.source[self.current] not in expected:
             return False
 
         self.current += 1
@@ -125,3 +127,24 @@ class Scanner:
         return Ok(self.make_token(
             TokenType.STRING,
             decode_escapes(self.source[self.start + 1:self.current - 1])))
+
+    def scan_comment(self, comment: str) -> Result[None, str]:
+        match comment:
+            case '/':
+                while self.peek() not in ['\0', '\n']:
+                    self.advance()
+
+            case '*':
+                while not self.is_at_end() and (self.peek() != '*' or self.peek(2) != '/'):
+                    if self.peek() == '\n':
+                        self.line += 1
+
+                    self.advance()
+
+                if self.is_at_end():
+                    return Err(build_syntax_error(self.line, 'unterminated multi-line comment'))
+
+                self.advance()
+                self.advance()
+
+        return Ok(None)
