@@ -15,7 +15,7 @@ class Scanner:
     def __iter__(self):
         return self
 
-    def __next__(self) -> Result[Token, str]:
+    def __next__(self) -> Result[Token, str] | None:
         self.start = self.current
 
         if self.eof_token:
@@ -27,7 +27,7 @@ class Scanner:
 
         return self.scan_token()
 
-    def scan_token(self) -> Result[Token, str]:
+    def scan_token(self) -> Result[Token, str] | None:
         match c := self.advance():
             case '(': return Ok(self.make_token(TokenType.LEFT_PAREN))
             case ')': return Ok(self.make_token(TokenType.RIGHT_PAREN))
@@ -38,7 +38,6 @@ class Scanner:
             case '+': return Ok(self.make_token(TokenType.PLUS))
             case '-': return Ok(self.make_token(TokenType.MINUS))
             case '*': return Ok(self.make_token(TokenType.STAR))
-            case '/': return Ok(self.make_token(TokenType.SLASH))
 
             case '=':
                 return Ok(self.make_token(TokenType.EQUAL_EQUAL if self.match('=') else TokenType.EQUAL))
@@ -48,6 +47,16 @@ class Scanner:
                 return Ok(self.make_token(TokenType.LESS_EQUAL if self.match('=') else TokenType.LESS))
             case '>':
                 return Ok(self.make_token(TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER))
+
+            case ' ' | '\r' | '\t': pass
+            case '\n': self.line += 1
+
+            case '/':
+                if not self.match('/'):
+                    return Ok(self.make_token(TokenType.SLASH))
+
+                while (self.peek() != '\n' and not self.is_at_end()):
+                    self.advance()
 
             case _:
                 return Err(f'{self.line} | unexpected character: {repr(c)}')
@@ -60,6 +69,12 @@ class Scanner:
             return self.source[self.current]
         finally:
             self.current += 1
+
+    def peek(self) -> str:
+        if self.is_at_end():
+            return '\0'
+
+        return self.source[self.current]
 
     def match(self, expected: str) -> bool:
         if self.is_at_end():
