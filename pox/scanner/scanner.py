@@ -1,7 +1,7 @@
 # coding: utf-8
 
-from .token import Token, TokenType
 from result import Ok, Err, Result
+from .token import Token, TokenType, RESERVED_KEYWORDS
 
 from pox.utils import build_syntax_error, decode_escapes
 
@@ -59,8 +59,9 @@ class Scanner:
                 while self.peek() not in ['\0', '\n']:
                     self.advance()
 
-            case '\'' | '"':
-                return self.scan_string(c)
+            case '\'' | '"': return self.scan_string(c)
+            case c if c.isdigit(): return self.scan_number()
+            case c if c.isalpha(): return self.scan_identifier()
 
             case _:
                 return Err(build_syntax_error(self.line, f'unexpected character: {repr(c)}'))
@@ -74,11 +75,11 @@ class Scanner:
         finally:
             self.current += 1
 
-    def peek(self) -> str:
+    def peek(self, n=1) -> str:
         if self.is_at_end():
             return '\0'
 
-        return self.source[self.current]
+        return self.source[self.current + n - 1]
 
     def match(self, expected: str) -> bool:
         if self.is_at_end() or self.source[self.current] != expected:
@@ -89,6 +90,25 @@ class Scanner:
 
     def make_token(self, type, literal=None) -> Token:
         return Token(type, self.source[self.start:self.current], literal, self.line)
+
+    def scan_number(self) -> Result[Token, str] | None:
+        while self.peek().isdigit():
+            self.advance()
+
+        if self.peek() == '.' and self.peek(2).isdigit():
+            self.advance()
+
+            while self.peek().isdigit():
+                self.advance()
+
+        return Ok(self.make_token(TokenType.NUMBER, float(self.source[self.start:self.current])))
+
+    def scan_identifier(self) -> Result[Token, str] | None:
+        while self.peek().isalnum() or self.peek() == '_':
+            self.advance()
+
+        return Ok(self.make_token(
+            RESERVED_KEYWORDS.get(self.source[self.start:self.current], TokenType.IDENTIFIER)))
 
     def scan_string(self, quote: str) -> Result[Token, str] | None:
         while self.peek() not in ['\0', quote]:
