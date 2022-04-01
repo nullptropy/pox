@@ -40,6 +40,15 @@ class Scanner:
             case '*': return Ok(self.make_token(TokenType.STAR))
             case '/': return Ok(self.make_token(TokenType.SLASH))
 
+            case '=':
+                return Ok(self.make_token(TokenType.EQUAL_EQUAL if self.match('=') else TokenType.EQUAL))
+            case '!':
+                return Ok(self.make_token(TokenType.BANG_EQUAL if self.match('=') else TokenType.BANG))
+            case '<':
+                return Ok(self.make_token(TokenType.LESS_EQUAL if self.match('=') else TokenType.LESS))
+            case '>':
+                return Ok(self.make_token(TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER))
+
             case _:
                 return Err(f'{self.line} | unexpected character: {repr(c)}')
 
@@ -51,6 +60,16 @@ class Scanner:
             return self.source[self.current]
         finally:
             self.current += 1
+
+    def match(self, expected: str) -> bool:
+        if self.is_at_end():
+            return False
+
+        if self.source[self.current] != expected:
+            return False
+
+        self.current += 1
+        return True
 
     def make_token(self, type, literal=None) -> Token:
         return Token(type, self.source[self.start:self.current], literal, self.line)
