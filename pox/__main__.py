@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import sys
+import readline
 
 from result import Ok, Err 
 from .scanner import Token, Scanner
@@ -15,7 +16,11 @@ class Pox:
         return 65 if self.error_occured else 0
 
     def repl(self):
-        pass
+        while True:
+            try:
+                self.tokenize(input('::: '))
+            except EOFError:
+                exit('')
 
     def run_file(self, path: str) -> int:
         return self.run(open(path, 'r').read())
