@@ -61,7 +61,7 @@ class Scanner:
             case _:
                 return Err(f'{self.line} | unexpected character: {repr(c)}')
 
-    def is_at_end(self):
+    def is_at_end(self) -> bool:
         return self.current >= len(self.source)
 
     def advance(self) -> str:
