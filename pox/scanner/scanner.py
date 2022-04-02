@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from result import Ok, Err, Result
-from .token import Token, TokenType, RESERVED_KEYWORDS
 
+from .token import Token, TokenType, RESERVED_KEYWORDS
 from pox.utils import build_syntax_error, decode_escapes
 
 class Scanner:
@@ -66,7 +66,7 @@ class Scanner:
             case c if c.isalpha(): return self.scan_identifier()
 
             case _:
-                return Err(build_syntax_error(self.line, f'unexpected character: {repr(c)}'))
+                return Err(build_syntax_error(self, f'unexpected character: {repr(c)}'))
 
     def is_at_end(self) -> bool:
         return self.current >= len(self.source)
@@ -120,7 +120,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            return Err(build_syntax_error(self.line, 'unterminated string'))
+            return Err(build_syntax_error(self, 'unterminated string'))
 
         self.advance()
 
@@ -142,7 +142,7 @@ class Scanner:
                     self.advance()
 
                 if self.is_at_end():
-                    return Err(build_syntax_error(self.line, 'unterminated multi-line comment'))
+                    return Err(build_syntax_error(self, 'unterminated multi-line comment'))
 
                 self.advance()
                 self.advance()

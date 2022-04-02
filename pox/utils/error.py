@@ -1,4 +1,4 @@
 # coding: utf-8
 
-def build_syntax_error(line: int, message: str) -> str:
-    return f'SyntaxError: {line} | {message}'
+def build_syntax_error(scanner, message: str) -> str:
+    return f'SyntaxError: {scanner.line} | {message}'
