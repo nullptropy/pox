@@ -2,8 +2,8 @@
 
 from result import Ok, Err, Result
 
-from .token import Token, TokenType, RESERVED_KEYWORDS
 from pox.utils import build_syntax_error, decode_escapes
+from pox.scanner.token import Token, TokenType, RESERVED_KEYWORDS
 
 class Scanner:
     line = 1

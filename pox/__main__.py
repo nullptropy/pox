@@ -4,7 +4,7 @@ import sys
 import readline
 
 from result import Ok, Err 
-from .scanner import Token, Scanner
+from pox.scanner import Token, Scanner
 
 class Pox:
     def __init__(self):
