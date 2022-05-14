@@ -1,7 +1,14 @@
 # coding: utf-8
 
+SYNTAX_ERROR_TEMPLATE = '''\
+  {line} | {line_text}
+SyntaxError: {message}'''
+
 def build_syntax_error(scanner, message: str) -> str:
-    return f'SyntaxError: {scanner.line} | {message}'
+    return SYNTAX_ERROR_TEMPLATE.format(
+        line=scanner.line,
+        line_text=scanner.source.split('\n')[scanner.line - 1],
+        message=message)
 
 # TODO: implement this properly
 def decode_escapes(s: str) -> str:
