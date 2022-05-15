@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import sys
-import readline
+import readline as _
 
 from result import Ok, Err 
 from pox.scanner import Token, Scanner
@@ -12,15 +12,14 @@ class Pox:
 
     def run(self, source: str) -> int:
         tokens = self.tokenize(source)
-
         return 65 if self.error_occured else 0
 
     def repl(self):
         while True:
             try:
                 self.tokenize(input('::: '))
-            except EOFError:
-                exit('')
+            except (EOFError, KeyboardInterrupt) as _:
+                return
 
     def run_file(self, path: str) -> int:
         return self.run(open(path, 'r').read())
@@ -36,15 +35,12 @@ class Pox:
 
     def tokenize(self, source: str) -> list[Token]:
         tokens = []
+        scanner = Scanner(source)
 
-        for token in Scanner(source):
+        for token in scanner.scan_tokens():
             match token:
-                case Ok(token):
-                    print(token)
-                    tokens.append(token)
-                case Err(message):
-                    self.error_occured = True
-                    print(message)
+                case Ok(token): tokens.append(token)
+                case Err(message): self.error_occured = True; print(message)
 
         return tokens
 

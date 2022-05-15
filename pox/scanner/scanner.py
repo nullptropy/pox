@@ -12,24 +12,21 @@ class Scanner:
 
     def __init__(self, source: str):
         self.source = source
-        self.eof_token = False
 
     def __iter__(self):
         return self
 
-    def __next__(self) -> Result[Token, str] | None:
+    def scan_tokens(self) -> list[Result[Token, str]]:
+        tokens = []
+
+        while not self.is_at_end():
+            tokens.append(self.scan_token())
+
+        return tokens + [Ok(Token(TokenType.EOF, "", None, self.line))]
+
+    def scan_token(self) -> Result[Token, str]:
         self.start = self.current
 
-        if self.eof_token:
-            raise StopIteration
-
-        if self.is_at_end():
-            self.eof_token = True
-            return Ok(Token(TokenType.EOF, "", None, self.line))
-
-        return self.scan_token()
-
-    def scan_token(self) -> Result[Token, str] | None:
         match c := self.advance():
             case '(': return Ok(self.make_token(TokenType.LEFT_PAREN))
             case ')': return Ok(self.make_token(TokenType.RIGHT_PAREN))
@@ -65,8 +62,11 @@ class Scanner:
             case c if c.isdigit(): return self.scan_number()
             case c if c.isalpha(): return self.scan_identifier()
 
-            case _:
-                return Err(build_syntax_error(self, f'unexpected character: {repr(c)}'))
+            # pyright is not smart enough to figure out this function never returns `None`
+            # case _:
+            #     return Err(build_syntax_error(self, f'unexpected character: {repr(c)}'))
+
+        return Err(build_syntax_error(self, f'unexpected character: {repr(c)}'))
 
     def is_at_end(self) -> bool:
         return self.current >= len(self.source)
@@ -93,7 +93,7 @@ class Scanner:
     def make_token(self, type, literal=None) -> Token:
         return Token(type, self.source[self.start:self.current], literal, self.line)
 
-    def scan_number(self) -> Result[Token, str] | None:
+    def scan_number(self) -> Result[Token, str]:
         while self.peek().isdigit():
             self.advance()
 
@@ -105,14 +105,14 @@ class Scanner:
 
         return Ok(self.make_token(TokenType.NUMBER, float(self.source[self.start:self.current])))
 
-    def scan_identifier(self) -> Result[Token, str] | None:
+    def scan_identifier(self) -> Result[Token, str]:
         while self.peek().isalnum() or self.peek() == '_':
             self.advance()
 
         return Ok(self.make_token(
             RESERVED_KEYWORDS.get(self.source[self.start:self.current], TokenType.IDENTIFIER)))
 
-    def scan_string(self, quote: str) -> Result[Token, str] | None:
+    def scan_string(self, quote: str) -> Result[Token, str]:
         while self.peek() not in ['\0', quote]:
             if self.peek() == '\n':
                 self.line += 1
