@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from enum import Enum
-from typing import Any
 
 TokenType = Enum('TokenType', '''
     LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE
@@ -26,14 +25,14 @@ RESERVED_KEYWORDS = {
     TokenType(n).name.lower(): TokenType(n) for n in range(23, 39)}
 
 class Token:
-    def __init__(self, type: TokenType, lexeme: str, literal: Any, line: int):
+    def __init__(self, type, lexeme, literal, line):
         self.type = type
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'Token<{self.type.name}{": " + str(self.lexeme) if self.lexeme else ""}, {self.line}>'
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return self.__str__()

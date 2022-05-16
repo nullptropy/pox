@@ -3,14 +3,13 @@
 import sys
 import readline as _
 
-from result import Ok, Err 
-from pox.scanner import Token, Scanner
+from pox.scanner import Scanner
 
 class Pox:
     def __init__(self):
         self.error_occured = False
 
-    def run(self, source: str) -> int:
+    def run(self, source):
         tokens = self.tokenize(source)
         return 65 if self.error_occured else 0
 
@@ -21,10 +20,10 @@ class Pox:
             except (EOFError, KeyboardInterrupt) as _:
                 return
 
-    def run_file(self, path: str) -> int:
+    def run_file(self, path):
         return self.run(open(path, 'r').read())
 
-    def main(self) -> int:
+    def main(self):
         match len(sys.argv):
             case 1:
                 return self.repl() or 0
@@ -33,14 +32,11 @@ class Pox:
             case _:
                 return print("usage: pox [path]") or 64
 
-    def tokenize(self, source: str) -> list[Token]:
-        tokens = []
-        scanner = Scanner(source)
+    def tokenize(self, source):
+        tokens = Scanner(source).scan_tokens()
 
-        for token in scanner.scan_tokens():
-            match token:
-                case Ok(token): tokens.append(token)
-                case Err(message): self.error_occured = True; print(message)
+        for token in tokens:
+            print(token)
 
         return tokens
 
