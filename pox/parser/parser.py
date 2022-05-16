@@ -30,10 +30,9 @@ class Parser:
 
         return self.peek().type == t
 
-    def match(self, types: list[TokenType]) -> bool:
+    def match(self, *types) -> bool:
         for t in types:
             if self.check(t):
-                self.advance()
-                return True
+                self.advance(); return True
 
         return False
