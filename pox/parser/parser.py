@@ -1,24 +1,24 @@
 # coding: utf-8
 
 from pox.parser.exprs import *
-from pox.scanner import Token, TokenType
+from pox.scanner import TokenType
 
 class Parser:
     current = 0
 
-    def __init__(self, tokens: list[Token]):
+    def __init__(self, tokens):
         self.tokens = tokens
 
-    def peek(self) -> Token:
+    def peek(self):
         return self.tokens[self.current]
 
-    def is_at_end(self) -> bool:
+    def is_at_end(self):
         return self.peek().type == TokenType.EOF
 
-    def previous(self) -> Token:
+    def previous(self):
         return self.tokens[self.current - 1]
 
-    def advance(self) -> Token:
+    def advance(self):
         if not self.is_at_end():
             self.current += 1
 
@@ -30,7 +30,7 @@ class Parser:
 
         return self.peek().type == t
 
-    def match(self, *types) -> bool:
+    def match(self, *types):
         for t in types:
             if self.check(t):
                 self.advance(); return True

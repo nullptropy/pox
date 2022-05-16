@@ -2,9 +2,6 @@
 
 from abc import ABC, abstractmethod
 
-from typing import Any
-from pox.scanner import Token
-
 class Expr:
     pass
 
@@ -26,7 +23,7 @@ class Visitor(ABC):
         pass
 
 class Binary(Expr):
-    def __init__(self, lt: Expr, op: Token, rt: Expr):
+    def __init__(self, lt, op, rt):
         self.lt = lt
         self.op = op
         self.rt = rt
@@ -35,21 +32,21 @@ class Binary(Expr):
         return visitor.visit_binary(self)
 
 class Grouping(Expr):
-    def __init__(self, expressions: Expr):
+    def __init__(self, expressions):
         self.expressions = expressions
 
     def accept(self, visitor):
         return visitor.visit_grouping(self)
 
 class Literal(Expr):
-    def __init__(self, value: Any):
+    def __init__(self, value):
         self.value = value
 
     def accept(self, visitor):
         return visitor.visit_literal(self)
 
 class Unary(Expr):
-    def __init__(self, op: Token, expression: Expr):
+    def __init__(self, op, expression):
         self.op = op
         self.expression = expression
 

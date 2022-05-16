@@ -9,14 +9,10 @@ FILE_HEADER = '''\
 
 from abc import ABC, abstractmethod
 
-from typing import Any
-from pox.scanner import Token
-
 class Expr:
     pass
 '''
 
-PARAM_TEMPLATE = '{1}: {0}'
 ASSGN_TEMPLATE = ' ' * 8 + 'self.{0} = {0}'
 EXPRS_TEMPLATE = '''\
 class {0}(Expr):
@@ -39,8 +35,8 @@ VISIT_TEMPLATE = '''\
 '''
 
 def generate_expr_class(name, *fields):
-    params = ', '.join(PARAM_TEMPLATE.format(*f.split(' ')) for f in fields)
-    fields = '\n'.join(ASSGN_TEMPLATE.format(f.split(' ')[1]) for f in fields)
+    params = ', '.join(f for f in fields)
+    fields = '\n'.join(ASSGN_TEMPLATE.format(f) for f in fields)
 
     return EXPRS_TEMPLATE.format(name, params, fields, name.lower())
 
@@ -53,10 +49,10 @@ def generate_exprs_file(expressions):
 
 def main():
     generate_exprs_file([
-        ['Binary', 'Expr lt', 'Token op', 'Expr rt'],
-        ['Grouping', 'Expr expressions'],
-        ['Literal', 'Any value'],
-        ['Unary', 'Token op', 'Expr expression'],
+        ['Binary', 'lt', 'op', 'rt'],
+        ['Grouping', 'expressions'],
+        ['Literal', 'value'],
+        ['Unary', 'op', 'expression'],
     ])
 
 if __name__ == '__main__':
