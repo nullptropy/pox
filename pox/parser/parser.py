@@ -2,6 +2,10 @@
 
 from pox.parser.exprs import *
 from pox.scanner import TokenType
+from pox.utils import build_parse_error
+
+class ParserError(Exception):
+    pass
 
 class Parser:
     current = 0
@@ -36,3 +40,6 @@ class Parser:
                 self.advance(); return True
 
         return False
+
+    def error(self, message):
+        raise ParserError(build_parse_error(self, message))

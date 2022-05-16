@@ -3,6 +3,9 @@
 from pox.utils import build_syntax_error, decode_escapes
 from pox.scanner.token import Token, TokenType, RESERVED_KEYWORDS
 
+class ScannerError(Exception):
+    pass
+
 class Scanner:
     line = 1
     start = 0
@@ -11,15 +14,17 @@ class Scanner:
     def __init__(self, source: str):
         self.source = source
 
-    def __iter__(self):
-        return self
+    def error(self, message):
+        raise ScannerError(build_syntax_error(self, message))
 
     def scan_tokens(self):
         tokens = []
 
         while not self.is_at_end():
-            if token := self.scan_token():
-                tokens.append(token)
+            try:
+               tokens.append(self.scan_token())
+            except ScannerError as err:
+                print(err)
 
         return tokens + [Token(TokenType.EOF, "", None, self.line)]
 
@@ -53,15 +58,14 @@ class Scanner:
                 if not self.match('/', '*'):
                     return self.make_token(TokenType.SLASH)
 
-                if error := self.scan_comment(self.source[self.current - 1]):
-                    print(error)
+                self.scan_comment(self.source[self.current - 1])
 
             case '\'' | '"': return self.scan_string(c)
             case c if c.isdigit(): return self.scan_number()
             case c if c.isalpha(): return self.scan_identifier()
 
             case _:
-                return print(build_syntax_error(self, f'unexpected character: {repr(c)}'))
+                self.error(f'unexpected character: {repr(c)}')
 
     def is_at_end(self):
         return self.current >= len(self.source)
@@ -115,7 +119,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            return print(build_syntax_error(self, 'unterminated string'))
+            self.error('unterminated string')
 
         self.advance()
 
@@ -137,9 +141,7 @@ class Scanner:
                     self.advance()
 
                 if self.is_at_end():
-                    return print(build_syntax_error(self, 'unterminated multi-line comment'))
+                    self.error('unterminated multi-line comment')
 
                 self.advance()
                 self.advance()
-
-        return None
