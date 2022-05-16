@@ -42,4 +42,4 @@ class Parser:
         return False
 
     def error(self, message):
-        raise ParserError(build_parse_error(self, message))
+        return ParserError(build_parse_error(self, message))
