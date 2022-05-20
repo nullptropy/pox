@@ -17,7 +17,7 @@ class Scanner:
     def error(self, message, line=None):
         return ScannerError(build_syntax_error(self, message, line))
 
-    def scan_tokens(self):
+    def scan_tokens(self, pox):
         tokens = []
 
         while not self.is_at_end():
@@ -28,6 +28,7 @@ class Scanner:
                     tokens.append(token)
             except ScannerError as err:
                 print(err) # TODO: find a more robust way to report scanner errors
+                pox.error_occured = True
 
         return tokens + [Token(TokenType.EOF, "", None, self.line)]
 

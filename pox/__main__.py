@@ -33,7 +33,7 @@ class Pox:
                 return print("usage: pox [path]") or 64
 
     def tokenize(self, source):
-        return Scanner(source).scan_tokens()
+        return Scanner(source).scan_tokens(self)
 
 if __name__ == '__main__':
     exit(Pox().main())
