@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import codecs
+
 SYNTAX_ERROR_TEMPLATE = '''\
   {line} | {line_text}
 SyntaxError: {message}'''
@@ -15,9 +17,5 @@ def build_syntax_error(scanner, message, line=None):
 def build_parse_error(parser, message):
     return f'{parser.peek()}: {message}'
 
-# TODO: implement this properly
 def decode_escapes(s):
-    for i, c in enumerate('abtnvfr'):
-        s = s.replace(f'\\{c}', chr(7 + i))
-
-    return s
+    return codecs.escape_decode(s)[0].decode()
