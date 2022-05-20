@@ -4,7 +4,7 @@ from pox.parser.exprs import *
 from pox.scanner import TokenType
 from pox.utils import build_parse_error
 
-class ParserError(Exception):
+class ParseError(Exception):
     pass
 
 class Parser:
@@ -42,4 +42,66 @@ class Parser:
         return False
 
     def error(self, message):
-        return ParserError(build_parse_error(self, message))
+        return ParseError(build_parse_error(self, message))
+
+    def consume(self, t, message):
+        if self.check(t):
+            return self.advance()
+
+        raise self.error(message)
+
+    def expression(self):
+        return self.equality()
+
+    def equality(self):
+        expr = self.comparison()
+
+        while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
+            expr = Binary(expr, self.previous(), self.comparison())
+
+        return expr
+
+    def comparison(self):
+        expr = self.term()
+
+        while self.match(
+                TokenType.GREATER, TokenType.GREATER_EQUAL,
+                TokenType.LESS, TokenType.LESS_EQUAL):
+            expr = Binary(expr, self.previous(), self.term())
+
+        return expr
+
+    def term(self):
+        expr = self.factor()
+
+        while self.match(TokenType.MINUS, TokenType.PLUS):
+            expr = Binary(expr, self.previous(), self.factor())
+
+        return expr
+
+    def factor(self):
+        expr = self.unary()
+
+        while self.match(TokenType.SLASH, TokenType.STAR):
+            expr = Binary(expr, self.previous(), self.factor())
+
+        return expr
+
+    def unary(self):
+        if self.match(TokenType.BANG, TokenType.MINUS):
+            return Unary(self.previous(), self.unary())
+
+        return self.primary()
+
+    def primary(self):
+        if self.match(TokenType.NIL): return Literal(None)
+        if self.match(TokenType.TRUE): return Literal(True)
+        if self.match(TokenType.FALSE): return Literal(False)
+
+        if self.match(TokenType.NUMBER, TokenType.STRING):
+            return Literal(self.previous().literal)
+
+        if self.match(TokenType.LEFT_PAREN):
+            expr = self.expression()
+            self.consume(TokenType.RIGHT_PAREN, 'expected \')\' after expression')
+            return Grouping(expr)
