@@ -16,6 +16,7 @@ class Pox:
     def repl(self):
         while True:
             try:
+                self.error_occured = False
                 self.run(input('::: '))
             except (EOFError, KeyboardInterrupt) as _:
                 return 0
