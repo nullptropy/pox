@@ -77,6 +77,10 @@ class Scanner:
         finally:
             self.current += 1
 
+    def prev(self):
+        if self.current != 0:
+            return self.source[self.current - 1]
+
     def peek(self, n=1):
         if self.is_at_end():
             return '\0'
@@ -115,9 +119,11 @@ class Scanner:
     def scan_string(self, quote):
         line = self.line
 
-        while self.peek() not in ['\0', quote]:
-            if self.peek() == '\n':
-                self.line += 1
+        while True:
+            match c := self.peek():
+                case '\0': break
+                case '\n': self.line += 1
+                case _ if (c == quote and self.prev() != '\\'): break
 
             self.advance()
 
