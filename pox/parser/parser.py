@@ -4,6 +4,10 @@ from pox.parser.exprs import *
 from pox.scanner import TokenType
 from pox.utils import build_parse_error
 
+SYNC_TOKENS = [
+    TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FUN,
+    TokenType.PRINT, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
+
 class ParseError(Exception):
     pass
 
@@ -49,6 +53,23 @@ class Parser:
             return self.advance()
 
         raise self.error(message)
+
+    def synchronize(self):
+        self.advance()
+
+        while not self.is_at_end():
+            if self.previous().type == TokenType.SEMICOLON or \
+                    self.peek().type in SYNC_TOKENS:
+                return
+
+            self.advance()
+
+    def parse(self, pox):
+        try:
+            return self.expression()
+        except ParseError as err:
+            print(err)
+            pox.error_occured = True
 
     def expression(self):
         return self.equality()
