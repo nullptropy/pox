@@ -14,17 +14,18 @@ class Scanner:
     def __init__(self, source: str):
         self.source = source
 
-    def error(self, message):
-        raise ScannerError(build_syntax_error(self, message))
+    def error(self, message, line=None):
+        raise ScannerError(build_syntax_error(self, message, line))
 
     def scan_tokens(self):
         tokens = []
 
         while not self.is_at_end():
             try:
-               tokens.append(self.scan_token())
+                if token := self.scan_token():
+                    tokens.append(token)
             except ScannerError as err:
-                print(err)
+                print(err) # TODO: find a more robust way to report scanner errors
 
         return tokens + [Token(TokenType.EOF, "", None, self.line)]
 
@@ -112,6 +113,8 @@ class Scanner:
             RESERVED_KEYWORDS.get(self.source[self.start:self.current], TokenType.IDENTIFIER))
 
     def scan_string(self, quote):
+        line = self.line
+
         while self.peek() not in ['\0', quote]:
             if self.peek() == '\n':
                 self.line += 1
@@ -119,7 +122,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            self.error('unterminated string')
+            self.error('unterminated string', line)
 
         self.advance()
 
@@ -128,6 +131,8 @@ class Scanner:
             decode_escapes(self.source[self.start + 1:self.current - 1]))
 
     def scan_comment(self, comment):
+        line = self.line
+
         match comment:
             case '/':
                 while self.peek() not in ['\0', '\n']:
@@ -141,7 +146,7 @@ class Scanner:
                     self.advance()
 
                 if self.is_at_end():
-                    self.error('unterminated multi-line comment')
+                    self.error('unterminated multi-line comment', line)
 
                 self.advance()
                 self.advance()
