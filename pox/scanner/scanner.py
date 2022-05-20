@@ -108,7 +108,10 @@ class Scanner:
             while self.peek().isdigit():
                 self.advance()
 
-        return self.make_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
+        number = self.source[self.start:self.current]
+        number = float(number) if '.' in number else int(number)
+
+        return self.make_token(TokenType.NUMBER, number)
 
     def scan_identifier(self):
         while self.peek().isalnum() or self.peek() == '_':
