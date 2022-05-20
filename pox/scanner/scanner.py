@@ -15,13 +15,15 @@ class Scanner:
         self.source = source
 
     def error(self, message, line=None):
-        raise ScannerError(build_syntax_error(self, message, line))
+        return ScannerError(build_syntax_error(self, message, line))
 
     def scan_tokens(self):
         tokens = []
 
         while not self.is_at_end():
             try:
+                self.start = self.current
+
                 if token := self.scan_token():
                     tokens.append(token)
             except ScannerError as err:
@@ -30,8 +32,6 @@ class Scanner:
         return tokens + [Token(TokenType.EOF, "", None, self.line)]
 
     def scan_token(self):
-        self.start = self.current
-
         match c := self.advance():
             case '(': return self.make_token(TokenType.LEFT_PAREN)
             case ')': return self.make_token(TokenType.RIGHT_PAREN)
@@ -62,11 +62,11 @@ class Scanner:
                 self.scan_comment(self.source[self.current - 1])
 
             case '\'' | '"': return self.scan_string(c)
-            case c if c.isdigit(): return self.scan_number()
-            case c if c.isalpha(): return self.scan_identifier()
+            case _ if c.isdigit(): return self.scan_number()
+            case _ if c.isalpha(): return self.scan_identifier()
 
             case _:
-                self.error(f'unexpected character: {repr(c)}')
+                raise self.error(f'unexpected character: {repr(c)}')
 
     def is_at_end(self):
         return self.current >= len(self.source)
@@ -128,7 +128,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            self.error('unterminated string', line)
+            raise self.error('unterminated string', line)
 
         self.advance()
 
@@ -152,7 +152,7 @@ class Scanner:
                     self.advance()
 
                 if self.is_at_end():
-                    self.error('unterminated multi-line comment', line)
+                    raise self.error('unterminated multi-line comment', line)
 
                 self.advance()
                 self.advance()
