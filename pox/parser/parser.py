@@ -64,12 +64,8 @@ class Parser:
 
             self.advance()
 
-    def parse(self, pox):
-        try:
-            return self.expression()
-        except ParseError as err:
-            print(err)
-            pox.error_occured = True
+    def parse(self):
+        return self.expression()
 
     def expression(self):
         return self.equality()

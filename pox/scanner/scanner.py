@@ -13,26 +13,21 @@ class Scanner:
 
     def __init__(self, source: str):
         self.source = source
+        self.eof_returned = False
 
     def error(self, message, line=None):
         return ScannerError(build_syntax_error(self, message, line))
 
-    def scan_tokens(self, pox):
-        tokens = []
-
-        while not self.is_at_end():
-            try:
-                self.start = self.current
-
-                if token := self.scan_token():
-                    tokens.append(token)
-            except ScannerError as err:
-                print(err) # TODO: find a more robust way to report scanner errors
-                pox.error_occured = True
-
-        return tokens + [Token(TokenType.EOF, "", None, self.line)]
-
     def scan_token(self):
+        self.start = self.current
+
+        if self.is_at_end():
+            if not self.eof_returned:
+                self.eof_returned = True
+                return Token(TokenType.EOF, "", None, self.line)
+
+            raise StopIteration
+
         match c := self.advance():
             case '(': return self.make_token(TokenType.LEFT_PAREN)
             case ')': return self.make_token(TokenType.RIGHT_PAREN)

@@ -3,8 +3,8 @@
 import sys
 import readline as _
 
-from pox.scanner import Scanner
-from pox.parser import Parser, Visitor
+from pox.parser import Parser, Visitor, ParseError
+from pox.scanner import Scanner, ScannerError
 
 class ASTPrinter(Visitor):
     def visit_binary(self, expr):
@@ -28,13 +28,40 @@ class Pox:
         self.error_occured = False
 
     def run(self, source):
-        tokens = Scanner(source).scan_tokens(self)
-        expression = Parser(tokens).parse(self)
+        tokens = self.tokenize(source)
+        expression = Parser(tokens).parse()
 
         if self.error_occured:
             return 65
 
         return self.ast_printer.print(expression) or 0
+
+    def tokenize(self, source):
+        tokens  = []
+        scanner = Scanner(source)
+
+        while True:
+            try:
+                if token := scanner.scan_token():
+                    tokens.append(token)
+            except StopIteration:
+                break
+            except ScannerError as err:
+                self.report_error(err)
+
+        return tokens
+
+    def parse(self, tokens):
+        parser = Parser(tokens)
+
+        try:
+            return parser.parse()
+        except ParseError as err:
+            self.report_error(err)
+
+    def report_error(self, error):
+        print(error)
+        self.error_occured = True
 
     def repl(self):
         while True:
@@ -43,6 +70,8 @@ class Pox:
                 self.run(input('::: '))
             except (EOFError, KeyboardInterrupt) as _:
                 return 0
+            except Exception as err:
+                print(err)
 
     def run_file(self, path):
         return self.run(open(path, 'r').read())
