@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import codecs
+import numbers
 
 SYNTAX_ERROR_TEMPLATE = '''\
   {line} | {line_text}
@@ -19,3 +20,7 @@ def build_parse_error(parser, message):
 
 def decode_escapes(s):
     return codecs.escape_decode(s)[0].decode()
+
+def number(*operands):
+    return all(map(lambda n: isinstance(n, numbers.Number), operands))
+
