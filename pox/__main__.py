@@ -11,7 +11,7 @@ class ASTPrinter(Visitor):
         return f'({expr.op.lexeme} {expr.lt.accept(self)} {expr.rt.accept(self)})'
 
     def visit_grouping(self, expr):
-        return f'(group {expr.expressions.accept(self)})'
+        return f'(group {expr.expression.accept(self)})'
 
     def visit_literal(self, expr):
         return str(expr.value) if expr.value else 'nil'
