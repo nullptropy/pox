@@ -24,3 +24,8 @@ def decode_escapes(s):
 def number(*operands):
     return all(map(lambda n: isinstance(n, numbers.Number), operands))
 
+def stringify(obj):
+    if obj is None:
+        return 'nil'
+
+    return str(obj)
