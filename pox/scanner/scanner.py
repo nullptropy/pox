@@ -73,9 +73,9 @@ class Scanner:
         finally:
             self.current += 1
 
-    def prev(self):
+    def prev(self, n=1):
         if self.current != 0:
-            return self.source[self.current - 1]
+            return self.source[self.current - n]
 
     def peek(self, n=1):
         if self.is_at_end():
@@ -120,9 +120,9 @@ class Scanner:
 
         while True:
             match c := self.peek():
-                case '\0': break
                 case '\n': self.line += 1
-                case _ if (c == quote and self.prev() != '\\'): break
+                case '\0' | _ if c == quote: break
+                case _ if c == '\\' and self.prev() != '\\': self.advance()
 
             self.advance()
 
