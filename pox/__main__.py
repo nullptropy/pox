@@ -7,16 +7,16 @@ from pox.parser import Parser, Visitor, ParseError
 from pox.scanner import Scanner, ScannerError
 
 class ASTPrinter(Visitor):
-    def visit_binary(self, expr):
+    def visit_binary_expr(self, expr):
         return f'({expr.op.lexeme} {expr.lt.accept(self)} {expr.rt.accept(self)})'
 
-    def visit_grouping(self, expr):
+    def visit_grouping_expr(self, expr):
         return f'(group {expr.expression.accept(self)})'
 
-    def visit_literal(self, expr):
+    def visit_literal_expr(self, expr):
         return str(expr.value) if expr.value else 'nil'
 
-    def visit_unary(self, expr):
+    def visit_unary_expr(self, expr):
         return f'({expr.op.lexeme} {expr.expression.accept(self)})'
 
     def print(self, expression):

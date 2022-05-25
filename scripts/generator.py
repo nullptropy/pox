@@ -40,7 +40,7 @@ def generate_class(cname, name, *fields):
     params = ', '.join(f for f in fields)
     fields = '\n'.join(ASSGN_TEMPLATE.format(f) for f in fields)
 
-    return CLASS_TEMPLATE.format(cname, name, params, fields, name.lower(), cname.lower())
+    return CLASS_TEMPLATE.format(name, cname, params, fields, name.lower(), cname.lower())
 
 def generate_file(cname, data):
     visits = '\n'.join(VISIT_TEMPLATE.format(e.lower(), cname.lower()) for e, *_ in data)

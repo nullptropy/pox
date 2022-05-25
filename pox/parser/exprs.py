@@ -22,7 +22,7 @@ class Visitor(ABC):
     def visit_unary_expr(self, expr):
         pass
 
-class Expr(Binary):
+class Binary(Expr):
     def __init__(self, lt, op, rt):
         self.lt = lt
         self.op = op
@@ -31,21 +31,21 @@ class Expr(Binary):
     def accept(self, visitor):
         return visitor.visit_binary_expr(self)
 
-class Expr(Grouping):
-    def __init__(self, expressions):
-        self.expressions = expressions
+class Grouping(Expr):
+    def __init__(self, expression):
+        self.expression = expression
 
     def accept(self, visitor):
         return visitor.visit_grouping_expr(self)
 
-class Expr(Literal):
+class Literal(Expr):
     def __init__(self, value):
         self.value = value
 
     def accept(self, visitor):
         return visitor.visit_literal_expr(self)
 
-class Expr(Unary):
+class Unary(Expr):
     def __init__(self, op, expression):
         self.op = op
         self.expression = expression
