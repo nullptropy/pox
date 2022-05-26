@@ -60,7 +60,8 @@ def main():
             ['Binary', 'lt', 'op', 'rt'],
             ['Grouping', 'expression'],
             ['Literal', 'value'],
-            ['Unary', 'op', 'expression']
+            ['Unary', 'op', 'expression'],
+            ['Variable', 'name']
         ]
     )
 
@@ -69,6 +70,7 @@ def main():
         [
             ['Expression', 'expression'],
             ['Print', 'expression'],
+            ['Var', 'name', 'initializer'],
         ]
     )
 

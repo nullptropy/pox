@@ -1,5 +1,14 @@
 program
-    : statement+ EOF
+    : decleration* EOF
+    ;
+
+decleration
+    : varDecl
+    | statement
+    ;
+
+varDecl
+    : "var" IDENTIFIER ( "=" expression )? ";"
     ;
 
 statement
@@ -47,4 +56,5 @@ primary
     | 'false'
     | 'nil'
     | "(" expression ")"
+    | IDENTIFIER
     ;
