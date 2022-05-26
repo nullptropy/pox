@@ -66,13 +66,33 @@ class Parser:
 
             self.advance()
 
-    def parse(self):
+    def parse(self, pox):
         statements = []
 
         while not self.is_at_end():
-            statements.append(self.statement())
+            try:
+                statements.append(self.declaration())
+            except ParseError as err:
+                self.synchronize()
+                pox.report_error(err)
 
         return statements
+
+    def declaration(self):
+        if self.match(TokenType.VAR):
+            return self.var_declaration()
+
+        return self.statement()
+
+    def var_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, 'expect variable name')
+        init = None
+
+        if self.match(TokenType.EQUAL):
+            init = self.expression()
+
+        self.consume(TokenType.SEMICOLON, 'expect \';\' after variable declaration')
+        return Var(name, init)
 
     def statement(self):
         if self.match(TokenType.PRINT):
@@ -137,6 +157,7 @@ class Parser:
         if self.match(TokenType.NIL): return Literal(None)
         if self.match(TokenType.TRUE): return Literal(True)
         if self.match(TokenType.FALSE): return Literal(False)
+        if self.match(TokenType.IDENTIFIER): return Variable(self.previous())
 
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return Literal(self.previous().literal)

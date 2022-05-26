@@ -58,7 +58,7 @@ class Pox:
         return Scanner(source).scan_tokens(self)
 
     def parse(self, tokens):
-        return Parser(tokens).parse()
+        return Parser(tokens).parse(self)
 
 if __name__ == '__main__':
     exit(Pox().main())

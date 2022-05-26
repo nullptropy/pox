@@ -73,6 +73,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 check_number_operands(expr.op, right)
                 return -right
 
+    def visit_variable_expr(self, expr):
+        print(expr)
+
+    def visit_var_stmt(self, stmt):
+        print(stmt.name)
+
     def visit_expression_stmt(self, stmt):
         self.evaluate(stmt.expression)
 
