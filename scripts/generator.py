@@ -32,7 +32,7 @@ class {0}Visitor(ABC):
 '''
 VISIT_TEMPLATE = '''\
     @abstractmethod
-    def visit_{0}_{1}(self, expr):
+    def visit_{0}_{1}(self, {1}):
         pass
 '''
 
