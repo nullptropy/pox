@@ -17,8 +17,15 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr):
         return expr.accept(self)
 
-    def interpret(self, expression):
-        return stringify(self.evaluate(expression))
+    def interpret(self, stmts, pox):
+        try:
+            for stmt in stmts:
+                self.execute(stmt)
+        except RuntimeError as err:
+            pox.report_error(err)
+
+    def execute(self, stmt):
+        return stmt.accept(self)
 
     def visit_binary_expr(self, expr):
         lt = self.evaluate(expr.lt)
@@ -65,3 +72,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
             case TokenType.MINUS:
                 check_number_operands(expr.op, right)
                 return -right
+
+    def visit_expression_stmt(self, stmt):
+        self.evaluate(stmt.expression)
+
+    def visit_print_stmt(self, stmt):
+        print(stringify(self.evaluate(stmt.expression)))

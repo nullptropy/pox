@@ -13,8 +13,13 @@ class Pox:
         self.runtime_error_occured = False
 
     def report_error(self, error):
+        match error:
+            case RuntimeError():
+                self.runtime_error_occured = True
+            case _:
+                self.error_occured = True
+
         print(error)
-        self.error_occured = True
 
     def repl(self):
         interpreter = Interpreter()
@@ -41,27 +46,19 @@ class Pox:
                 return print("usage: pox [path]") or 64
 
     def run(self, source, interpreter):
-        expression = Parser(self.tokenize(source)).parse()
+        statements = self.parse(self.tokenize(source))
 
-        if not self.error_occured:
-            try:
-                return print(interpreter.interpret(expression)) or 0
-            except RuntimeError as err:
-                self.runtime_error_occured = True
-                self.report_error(err)
+        if self.error_occured:
+            return 65
 
-        return 70 if self.runtime_error_occured else 65
+        interpreter.interpret(statements, self)
+        return 70 if self.runtime_error_occured else 0
 
     def tokenize(self, source):
         return Scanner(source).scan_tokens(self)
 
     def parse(self, tokens):
-        parser = Parser(tokens)
-
-        try:
-            return parser.parse()
-        except ParseError as err:
-            self.report_error(err)
+        return Parser(tokens).parse()
 
 if __name__ == '__main__':
     exit(Pox().main())
