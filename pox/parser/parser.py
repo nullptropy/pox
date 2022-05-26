@@ -67,7 +67,28 @@ class Parser:
             self.advance()
 
     def parse(self):
-        return self.expression()
+        statements = []
+
+        while not self.is_at_end():
+            statements.append(self.statement())
+
+        return statements
+
+    def statement(self):
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
+        return self.expression_statement()
+
+    def print_statement(self):
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, 'expect \';\' after value')
+        return Print(value)
+
+    def expression_statement(self):
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, 'expect \';\' after expression')
+        return Expression(value)
 
     def expression(self):
         return self.equality()
