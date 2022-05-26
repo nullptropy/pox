@@ -1,19 +1,21 @@
 # coding: utf-8
 
+from pox.error import RuntimeError
 from pox.utils import number, stringify
-from pox.parser import ExprVisitor, StmtVisitor
-from pox.scanner import TokenType
 
-class RuntimeError(Exception):
-    def __init__(self, token, message):
-        self.token = token
-        self.message = message
+from pox.scanner import TokenType
+from pox.parser import ExprVisitor, StmtVisitor
+
+from .environment import Environment
 
 def check_number_operands(operator, *operands):
     if not number(*operands):
         raise RuntimeError(operator, 'operands must be numbers')
 
 class Interpreter(ExprVisitor, StmtVisitor):
+    def __init__(self):
+        self.env = Environment()
+
     def evaluate(self, expr):
         return expr.accept(self)
 
@@ -74,10 +76,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 return -right
 
     def visit_variable_expr(self, expr):
-        print(expr)
+        return self.env.get(expr.name)
 
     def visit_var_stmt(self, stmt):
-        print(stmt.name)
+        self.env.define(
+            stmt.name.lexeme,
+            self.evaluate(stmt.initializer) if stmt.initializer else None)
 
     def visit_expression_stmt(self, stmt):
         self.evaluate(stmt.expression)
