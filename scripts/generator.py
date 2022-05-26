@@ -61,7 +61,8 @@ def main():
             ['Grouping', 'expression'],
             ['Literal', 'value'],
             ['Unary', 'op', 'expression'],
-            ['Variable', 'name']
+            ['Variable', 'name'],
+            ['Assign', 'name', 'value'],
         ]
     )
 

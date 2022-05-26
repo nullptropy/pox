@@ -108,7 +108,21 @@ class Parser:
         return Expression(value)
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self):
+        expr = self.equality()
+
+        if self.match(TokenType.EQUAL):
+            equals = self.previous()
+            rvalue = self.assignment()
+
+            if isinstance(expr, Variable):
+                return Assign(expr.name, rvalue)
+
+            raise ParseError(equals, 'invalid assign target')
+
+        return expr
 
     def equality(self):
         expr = self.comparison()

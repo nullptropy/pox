@@ -78,6 +78,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_variable_expr(self, expr):
         return self.env.get(expr.name)
 
+    def visit_assign_expr(self, expr):
+        value = self.evaluate(expr.value)
+        self.env.assign(expr.name, value)
+        return value
+
     def visit_var_stmt(self, stmt):
         self.env.define(
             stmt.name.lexeme,

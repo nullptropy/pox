@@ -25,7 +25,12 @@ printStmt
     ;
 
 expression
-    : equality
+    : assignment
+    ;
+
+assignment
+    : IDENTIFIER "=" assignment
+    | equality
     ;
 
 equality

@@ -26,6 +26,10 @@ class ExprVisitor(ABC):
     def visit_variable_expr(self, expr):
         pass
 
+    @abstractmethod
+    def visit_assign_expr(self, expr):
+        pass
+
 class Binary(Expr):
     def __init__(self, lt, op, rt):
         self.lt = lt
@@ -63,3 +67,11 @@ class Variable(Expr):
 
     def accept(self, visitor):
         return visitor.visit_variable_expr(self)
+
+class Assign(Expr):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_assign_expr(self)
