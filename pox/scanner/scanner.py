@@ -18,15 +18,20 @@ class Scanner:
     def error(self, message, line=None):
         return ScannerError(build_syntax_error(self, message, line))
 
+    def scan_tokens(self, pox):
+        tokens = []
+
+        while not self.is_at_end():
+            try:
+                if token := self.scan_token():
+                    tokens.append(token)
+            except ScannerError as err:
+                pox.report_error(err)
+
+        return tokens + [Token(TokenType.EOF, "", None, self.line)]
+
     def scan_token(self):
         self.start = self.current
-
-        if self.is_at_end():
-            if not self.eof_returned:
-                self.eof_returned = True
-                return Token(TokenType.EOF, "", None, self.line)
-
-            raise StopIteration
 
         match c := self.advance():
             case '(': return self.make_token(TokenType.LEFT_PAREN)
@@ -121,7 +126,8 @@ class Scanner:
         while True:
             match c := self.peek():
                 case '\n': self.line += 1
-                case '\0' | _ if c == quote: break
+                case '\0': break
+                case _ if c == quote: break
                 case _ if c == '\\' and self.prev() != '\\': self.advance()
 
             self.advance()
@@ -131,9 +137,12 @@ class Scanner:
 
         self.advance()
 
-        return self.make_token(
-            TokenType.STRING,
-            decode_escapes(self.source[self.start + 1:self.current - 1]))
+        try:
+            string = decode_escapes(self.source[self.start + 1:self.current - 1])
+        except Exception as err:
+            raise self.error(str(err))
+
+        return self.make_token(TokenType.STRING, string)
 
     def scan_comment(self, comment):
         line = self.line

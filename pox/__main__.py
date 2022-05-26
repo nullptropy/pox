@@ -53,19 +53,7 @@ class Pox:
         return 70 if self.runtime_error_occured else 65
 
     def tokenize(self, source):
-        tokens  = []
-        scanner = Scanner(source)
-
-        while True:
-            try:
-                if token := scanner.scan_token():
-                    tokens.append(token)
-            except StopIteration:
-                break
-            except ScannerError as err:
-                self.report_error(err)
-
-        return tokens
+        return Scanner(source).scan_tokens(self)
 
     def parse(self, tokens):
         parser = Parser(tokens)
