@@ -7,11 +7,11 @@ class Stmt:
 
 class StmtVisitor(ABC):
     @abstractmethod
-    def visit_expression_stmt(self, expr):
+    def visit_expression_stmt(self, stmt):
         pass
 
     @abstractmethod
-    def visit_print_stmt(self, expr):
+    def visit_print_stmt(self, stmt):
         pass
 
 class Expression(Stmt):
