@@ -1,10 +1,8 @@
 # coding: utf-8
 
-from pox.utils import build_syntax_error, decode_escapes
+from pox.error import ScannerError, build_syntax_error
+from pox.utils import decode_escapes
 from pox.scanner.token import Token, TokenType, RESERVED_KEYWORDS
-
-class ScannerError(Exception):
-    pass
 
 class Scanner:
     line = 1

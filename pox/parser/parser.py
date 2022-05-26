@@ -1,7 +1,7 @@
 # coding: utf-8
 
+from pox.error import ParseError, build_parse_error
 from pox.scanner import TokenType
-from pox.utils import build_parse_error
 
 from pox.parser.exprs import *
 from pox.parser.stmts import *
@@ -9,9 +9,6 @@ from pox.parser.stmts import *
 SYNC_TOKENS = [
     TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FUN,
     TokenType.PRINT, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
-
-class ParseError(Exception):
-    pass
 
 class Parser:
     current = 0
