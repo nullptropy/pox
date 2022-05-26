@@ -29,7 +29,6 @@ class Interpreter(Visitor):
 
         match expr.op.type:
             case TokenType.MINUS:         return lt  - rt
-            case TokenType.SLASH:         return lt  / rt
             case TokenType.STAR:          return lt  * rt
             case TokenType.LESS:          return lt  < rt
             case TokenType.GREATER:       return lt  > rt
@@ -37,6 +36,11 @@ class Interpreter(Visitor):
             case TokenType.GREATER_EQUAL: return lt >= rt
             case TokenType.EQUAL_EQUAL:   return lt == rt
             case TokenType.BANG_EQUAL:    return not (lt == rt)
+            case TokenType.SLASH:
+                if rt == 0:
+                    raise RuntimeError(expr.op, 'division by zero')
+
+                return lt  / rt
             case TokenType.PLUS:
                 try:
                     if isinstance(lt, str) or isinstance(rt, str):
