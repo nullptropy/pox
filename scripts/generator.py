@@ -27,8 +27,8 @@ class {0}({1}):
 '''
 
 VISITOR_TEMPLATE = '''\
-class Visitor(ABC):
-{}\
+class {0}Visitor(ABC):
+{1}\
 '''
 VISIT_TEMPLATE = '''\
     @abstractmethod
@@ -47,7 +47,7 @@ def generate_file(cname, data):
 
     print(
         FILE_HEADER.format(cname) + '\n' + \
-        VISITOR_TEMPLATE.format(visits) + '\n' + \
+        VISITOR_TEMPLATE.format(cname, visits) + '\n' + \
         '\n'.join(generate_class(cname, n, *f) for n, *f in data), end='')
 
 def main():
