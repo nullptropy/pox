@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from pox.utils import number, stringify
-from pox.parser import Visitor
+from pox.parser import ExprVisitor, StmtVisitor
 from pox.scanner import TokenType
 
 class RuntimeError(Exception):
@@ -13,7 +13,7 @@ def check_number_operands(operator, *operands):
     if not number(*operands):
         raise RuntimeError(operator, 'operands must be numbers')
 
-class Interpreter(Visitor):
+class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr):
         return expr.accept(self)
 

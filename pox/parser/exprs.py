@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 class Expr:
     pass
 
-class Visitor(ABC):
+class ExprVisitor(ABC):
     @abstractmethod
     def visit_binary_expr(self, expr):
         pass

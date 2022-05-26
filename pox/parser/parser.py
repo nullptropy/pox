@@ -1,8 +1,10 @@
 # coding: utf-8
 
-from pox.parser.exprs import *
 from pox.scanner import TokenType
 from pox.utils import build_parse_error
+
+from pox.parser.exprs import *
+from pox.parser.stmts import *
 
 SYNC_TOKENS = [
     TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FUN,
