@@ -69,6 +69,7 @@ def main():
     stmts = (
         'Stmt',
         [
+            ['Block', 'statements'],
             ['Expression', 'expression'],
             ['Print', 'expression'],
             ['Var', 'name', 'initializer'],

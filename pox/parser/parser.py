@@ -92,10 +92,19 @@ class Parser:
         return Var(name, init)
 
     def statement(self):
-        if self.match(TokenType.PRINT):
-            return self.print_statement()
+        if self.match(TokenType.PRINT): return self.print_statement()
+        if self.match(TokenType.LEFT_BRACE): return self.block_statement()
 
         return self.expression_statement()
+
+    def block_statement(self):
+        statements = []
+
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            statements.append(self.declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, 'expect \'}\' after')
+        return Block(statements)
 
     def print_statement(self):
         value = self.expression()
