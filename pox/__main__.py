@@ -28,8 +28,10 @@ class Pox:
             try:
                 self.error_occured = False
                 self.run(input('::: '), interpreter)
-            except (EOFError, KeyboardInterrupt) as _:
+            except EOFError:
                 return 0
+            except KeyboardInterrupt:
+                print()
             except Exception as err:
                 print(err)
 
