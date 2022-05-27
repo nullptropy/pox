@@ -29,6 +29,17 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def execute(self, stmt):
         return stmt.accept(self)
 
+    def execute_block(self, stmts, env):
+        previous = self.env
+
+        try:
+            self.env = env
+
+            for stmt in stmts:
+                self.execute(stmt)
+        finally:
+            self.env = previous
+
     def visit_binary_expr(self, expr):
         lt = self.evaluate(expr.lt)
         rt = self.evaluate(expr.rt)
@@ -82,6 +93,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(expr.value)
         self.env.assign(expr.name, value)
         return value
+
+    def visit_block_stmt(self, stmt):
+        self.execute_block(stmt.statements, Environment(self.env))
 
     def visit_var_stmt(self, stmt):
         self.env.define(
