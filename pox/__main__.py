@@ -3,8 +3,8 @@
 import sys
 import readline as _
 
-from pox.parser import Parser, ParseError
-from pox.scanner import Scanner, ScannerError
+from pox.parser import Parser
+from pox.scanner import Scanner
 from pox.interpreter import Interpreter, RuntimeError
 
 class Pox:
