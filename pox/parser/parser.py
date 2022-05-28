@@ -76,8 +76,8 @@ class Parser:
         return statements
 
     def declaration(self):
-        if self.match(TokenType.VAR):
-            return self.var_declaration()
+        if self.match(TokenType.VAR): return self.var_declaration()
+        if self.match(TokenType.FUN): return self.fun_declaration('function')
 
         return self.statement()
 
@@ -90,6 +90,23 @@ class Parser:
 
         self.consume(TokenType.SEMICOLON, 'expect \';\' after variable declaration')
         return Var(name, init)
+
+    def fun_declaration(self, kind):
+        name   = self.consume(TokenType.IDENTIFIER, f'expect {kind} name')
+        params = []
+
+        self.consume(TokenType.LEFT_PAREN, f'expect \'(\' after {kind} name')
+
+        if not self.check(TokenType.RIGHT_PAREN):
+            params.append(self.consume(TokenType.IDENTIFIER, 'expect parameter name'))
+
+            while self.match(TokenType.COMMA):
+                params.append(self.consume(TokenType.IDENTIFIER, 'expect parameter name'))
+
+        self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after parameters')
+        self.consume(TokenType.LEFT_BRACE, f'expect \'{{\' before {kind} body')
+
+        return Function(name, params, self.block_statement())
 
     def statement(self):
         if self.match(TokenType.IF): return self.if_statement()
@@ -134,11 +151,11 @@ class Parser:
         elif self.match(TokenType.VAR):     init = self.var_declaration()
         else:                               init = self.expression_statement()
 
-        condition = Literal(True) if self.match(TokenType.SEMICOLON) else self.expression()
+        condition = Literal(True) if self.check(TokenType.SEMICOLON) else self.expression()
         self.consume(TokenType.SEMICOLON, 'expect \';\' after loop condition')
 
-        increment = None if self.match(TokenType.SEMICOLON) else self.expression()
-        self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after loop condition')
+        increment = None if self.check(TokenType.RIGHT_PAREN) else self.expression()
+        self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after for clauses')
 
         return Block([
             init,

@@ -3,8 +3,17 @@ program
     ;
 
 decleration
-    : varDecl
+    : funDecl
+    | varDecl
     | statement
+    ;
+
+funDecl
+    : "fun" function
+    ;
+
+function
+    : IDENTIFIER "(" ( IDENTIFIER ( "," IDENTIFIER )* )? ")" block
     ;
 
 varDecl

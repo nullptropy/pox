@@ -6,7 +6,7 @@ from pox.utils import number, stringify
 from pox.scanner import TokenType
 from pox.parser import ExprVisitor, StmtVisitor
 
-from .callable import LoxCallable
+from .callable import LoxCallable, LoxFunction
 from .environment import Environment
 
 def check_number_operands(operator, *operands):
@@ -37,8 +37,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
         try:
             self.environment = env
 
-            for stmt in stmts:
-                self.execute(stmt)
+            for stmt in stmts.statements:
+                if stmt:
+                    self.execute(stmt)
         finally:
             self.environment = previous
 
@@ -120,6 +121,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.environment.assign(expr.name, value)
         return value
 
+    def visit_function_stmt(self, stmt):
+        self.environment.define(stmt.name.lexeme, LoxFunction(stmt))
+
     def visit_if_stmt(self, stmt):
         if bool(self.evaluate(stmt.condition)):
             self.execute(stmt.then_branch)
@@ -127,7 +131,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
             self.execute(stmt.else_branch)
 
     def visit_block_stmt(self, stmt):
-        self.execute_block(stmt.statements, Environment(self.environment))
+        self.execute_block(stmt, Environment(self.environment))
 
     def visit_var_stmt(self, stmt):
         self.environment.define(
