@@ -94,6 +94,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.env.assign(expr.name, value)
         return value
 
+    def visit_if_stmt(self, stmt):
+        if bool(self.evaluate(stmt.condition)):
+            self.execute(stmt.then_branch)
+        elif stmt.else_branch is not None:
+            self.execute(stmt.else_branch)
+
     def visit_block_stmt(self, stmt):
         self.execute_block(stmt.statements, Environment(self.env))
 
