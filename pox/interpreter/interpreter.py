@@ -6,6 +6,7 @@ from pox.utils import number, stringify
 from pox.scanner import TokenType
 from pox.parser import ExprVisitor, StmtVisitor
 
+from .callable import LoxCallable
 from .environment import Environment
 
 def check_number_operands(operator, *operands):
@@ -14,7 +15,8 @@ def check_number_operands(operator, *operands):
 
 class Interpreter(ExprVisitor, StmtVisitor):
     def __init__(self):
-        self.env = Environment()
+        self.globals = Environment()
+        self.environment = self.globals
 
     def evaluate(self, expr):
         return expr.accept(self)
@@ -30,15 +32,15 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return stmt.accept(self)
 
     def execute_block(self, stmts, env):
-        previous = self.env
+        previous = self.environment
 
         try:
-            self.env = env
+            self.environment = env
 
             for stmt in stmts:
                 self.execute(stmt)
         finally:
-            self.env = previous
+            self.environment = previous
 
     def visit_binary_expr(self, expr):
         lt = self.evaluate(expr.lt)
@@ -97,14 +99,25 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 return -right
 
     def visit_call_expr(self, expr):
-        pass
+        function  = self.evaluate(expr.callee)
+        arguments = list(map(self.evaluate, expr.arguments))
+
+        if not isinstance(function, LoxCallable):
+            raise RuntimeError(expr.paren, 'can only call functions and classes')
+
+        if len(arguments) != function.arity():
+            raise RuntimeError(
+                expr.paren,
+                f'expected {function.arity()} arguments but only got {len(arguments)}')
+
+        return function.call(self, arguments)
 
     def visit_variable_expr(self, expr):
-        return self.env.get(expr.name)
+        return self.environment.get(expr.name)
 
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
-        self.env.assign(expr.name, value)
+        self.environment.assign(expr.name, value)
         return value
 
     def visit_if_stmt(self, stmt):
@@ -114,10 +127,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
             self.execute(stmt.else_branch)
 
     def visit_block_stmt(self, stmt):
-        self.execute_block(stmt.statements, Environment(self.env))
+        self.execute_block(stmt.statements, Environment(self.environment))
 
     def visit_var_stmt(self, stmt):
-        self.env.define(
+        self.environment.define(
             stmt.name.lexeme,
             self.evaluate(stmt.initializer) if stmt.initializer else None)
 
