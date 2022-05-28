@@ -112,6 +112,7 @@ class Parser:
         if self.match(TokenType.IF): return self.if_statement()
         if self.match(TokenType.FOR): return self.for_statement()
         if self.match(TokenType.PRINT): return self.print_statement()
+        if self.match(TokenType.RETURN): return self.return_statement()
         if self.match(TokenType.WHILE): return self.while_statement()
         if self.match(TokenType.LEFT_BRACE): return self.block_statement()
 
@@ -143,6 +144,16 @@ class Parser:
         value = self.expression()
         self.consume(TokenType.SEMICOLON, 'expect \';\' after value')
         return Print(value)
+
+    def return_statement(self):
+        value = None
+        keyword = self.previous()
+
+        if not self.check(TokenType.SEMICOLON):
+            value = self.expression()
+
+        self.consume(TokenType.SEMICOLON, 'expect \';\' after return value')
+        return Return(keyword, value)
 
     def for_statement(self):
         self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after for')

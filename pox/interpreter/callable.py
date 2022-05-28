@@ -4,6 +4,10 @@ from abc import ABC, abstractmethod
 
 from .environment import Environment
 
+class ReturnException(Exception):
+    def __init__(self, value):
+        self.value = value
+
 class LoxCallable(ABC):
     @abstractmethod
     def arity(self):
@@ -29,4 +33,7 @@ class LoxFunction(LoxCallable):
         for i, param in enumerate(self.declaration.params):
             environment.define(param.lexeme, arguments[i])
 
-        interpreter.execute_block(self.declaration.body, environment)
+        try:
+            interpreter.execute_block(self.declaration.body, environment)
+        except ReturnException as return_value:
+            return return_value.value
