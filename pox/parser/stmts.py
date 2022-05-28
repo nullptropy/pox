@@ -26,6 +26,10 @@ class StmtVisitor(ABC):
     def visit_var_stmt(self, stmt):
         pass
 
+    @abstractmethod
+    def visit_while_stmt(self, stmt):
+        pass
+
 class Block(Stmt):
     def __init__(self, statements):
         self.statements = statements
@@ -63,3 +67,11 @@ class Var(Stmt):
 
     def accept(self, visitor):
         return visitor.visit_var_stmt(self)
+
+class While(Stmt):
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def accept(self, visitor):
+        return visitor.visit_while_stmt(self)
