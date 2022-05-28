@@ -81,7 +81,11 @@ factor
 
 unary
     : ('!' | '-') unary
-    | primary
+    | call
+    ;
+
+call
+    : primary ( "(" ( expression ( ", " expression )* )? ")" )*
     ;
 
 primary

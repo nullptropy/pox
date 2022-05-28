@@ -96,6 +96,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 check_number_operands(expr.op, right)
                 return -right
 
+    def visit_call_expr(self, expr):
+        pass
+
     def visit_variable_expr(self, expr):
         return self.env.get(expr.name)
 

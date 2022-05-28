@@ -58,6 +58,7 @@ def main():
         'Expr',
         [
             ['Binary', 'lt', 'op', 'rt'],
+            ['Call', 'callee', 'paren', 'arguments'],
             ['Grouping', 'expression'],
             ['Literal', 'value'],
             ['Logical', 'lt', 'op', 'rt'],
