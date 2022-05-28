@@ -134,7 +134,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self):
-        expr = self.equality()
+        expr = self.or_expr()
 
         if self.match(TokenType.EQUAL):
             equals = self.previous()
@@ -144,6 +144,22 @@ class Parser:
                 return Assign(expr.name, rvalue)
 
             raise ParseError(equals, 'invalid assign target')
+
+        return expr
+
+    def or_expr(self):
+        expr = self.and_expr()
+
+        while self.match(TokenType.OR):
+            expr = Logical(expr, self.previous(), self.and_expr())
+
+        return expr
+
+    def and_expr(self):
+        expr = self.equality()
+
+        while self.match(TokenType.AND):
+            expr = Logical(expr, self.previous(), self.equality())
 
         return expr
 

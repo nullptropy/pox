@@ -60,6 +60,7 @@ def main():
             ['Binary', 'lt', 'op', 'rt'],
             ['Grouping', 'expression'],
             ['Literal', 'value'],
+            ['Logical', 'lt', 'op', 'rt'],
             ['Unary', 'op', 'expression'],
             ['Variable', 'name'],
             ['Assign', 'name', 'value'],
