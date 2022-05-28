@@ -71,6 +71,7 @@ def main():
         [
             ['Block', 'statements'],
             ['Expression', 'expression'],
+            ['If', 'condition', 'then_branch', 'else_branch'],
             ['Print', 'expression'],
             ['Var', 'name', 'initializer'],
         ]

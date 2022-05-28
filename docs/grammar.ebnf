@@ -13,12 +13,13 @@ varDecl
 
 statement
     : exprStmt
+    | ifStmt
     | printStmt
     | block
     ;
 
-block
-    : "{" decleration "}"
+ifStmt
+    : "if (" expression ")" statement ( "else" statement )?
     ;
 
 exprStmt
@@ -27,6 +28,10 @@ exprStmt
 
 printStmt
     : "print" expression ";"
+    ;
+
+block
+    : "{" decleration "}"
     ;
 
 expression
