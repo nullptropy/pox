@@ -19,8 +19,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.environment = self.globals
 
     def evaluate(self, expr):
-        if expr:
-            return expr.accept(self)
+        return expr.accept(self)
 
     def interpret(self, stmts, pox):
         try:
@@ -150,4 +149,4 @@ class Interpreter(ExprVisitor, StmtVisitor):
         print(stringify(self.evaluate(stmt.expression)))
 
     def visit_return_stmt(self, stmt):
-        raise ReturnException(self.evaluate(stmt.value))
+        raise ReturnException(self.evaluate(stmt.value) if stmt.value else None)
