@@ -24,6 +24,6 @@ class Environment:
             return self.values.update({name.lexeme: value})
 
         if self.enclosing:
-            return self.assign(name, value)
+            return self.enclosing.assign(name, value)
 
         raise RuntimeError(name, f'undefined variable {name.lexeme}')
