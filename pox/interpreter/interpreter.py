@@ -121,5 +121,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_expression_stmt(self, stmt):
         self.evaluate(stmt.expression)
 
+    def visit_while_stmt(self, stmt):
+        while bool(self.evaluate(stmt.condition)):
+            self.execute(stmt.body)
+
     def visit_print_stmt(self, stmt):
         print(stringify(self.evaluate(stmt.expression)))
