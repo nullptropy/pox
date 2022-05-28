@@ -93,6 +93,7 @@ class Parser:
 
     def statement(self):
         if self.match(TokenType.IF): return self.if_statement()
+        if self.match(TokenType.FOR): return self.for_statement()
         if self.match(TokenType.PRINT): return self.print_statement()
         if self.match(TokenType.WHILE): return self.while_statement()
         if self.match(TokenType.LEFT_BRACE): return self.block_statement()
@@ -125,6 +126,30 @@ class Parser:
         value = self.expression()
         self.consume(TokenType.SEMICOLON, 'expect \';\' after value')
         return Print(value)
+
+    def for_statement(self):
+        self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after for')
+
+        if self.match(TokenType.SEMICOLON): init = None
+        elif self.match(TokenType.VAR):     init = self.var_declaration()
+        else:                               init = self.expression_statement()
+
+        condition = Literal(True) if self.match(TokenType.SEMICOLON) else self.expression()
+        self.consume(TokenType.SEMICOLON, 'expect \';\' after loop condition')
+
+        increment = None if self.match(TokenType.SEMICOLON) else self.expression()
+        self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after loop condition')
+
+        return Block([
+            init,
+            While(
+                condition,
+                Block([
+                    self.statement(),
+                    increment
+                ])
+            )
+        ])
 
     def while_statement(self):
         self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after while')
@@ -224,3 +249,5 @@ class Parser:
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, 'expected \')\' after expression')
             return Grouping(expr)
+
+        raise self.error('expect expression')
