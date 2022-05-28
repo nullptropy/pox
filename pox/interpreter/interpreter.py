@@ -76,6 +76,16 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_literal_expr(self, expr):
         return expr.value
 
+    def visit_logical_expr(self, expr):
+        lt = self.evaluate(expr.lt)
+
+        if expr.op.type == TokenType.OR:
+            if bool(lt): return lt
+        else:
+            if not bool(lt): return lt
+
+        return self.evaluate(expr.rt)
+
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.expression)
 
