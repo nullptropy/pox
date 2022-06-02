@@ -109,7 +109,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         if len(arguments) != function.arity():
             raise RuntimeError(
                 expr.paren,
-                f'expected {function.arity()} arguments but only got {len(arguments)}')
+                f'expected {function.arity()} arguments but got {len(arguments)}')
 
         return function.call(self, arguments)
 
