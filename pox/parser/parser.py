@@ -7,7 +7,7 @@ from pox.parser.exprs import *
 from pox.parser.stmts import *
 
 SYNC_TOKENS = [
-    TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FUN,
+    TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FN,
     TokenType.PRINT, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
 
 class Parser:
@@ -38,11 +38,10 @@ class Parser:
         return self.peek().type == t
 
     def match(self, *types):
-        for t in types:
-            if self.check(t):
-                self.advance(); return True
+        if matched := any(map(self.check, types)):
+            self.advance()
 
-        return False
+        return matched
 
     def error(self, message):
         return ParseError(build_parse_error(self, message))
@@ -77,7 +76,7 @@ class Parser:
 
     def declaration(self):
         if self.match(TokenType.VAR): return self.var_declaration()
-        if self.match(TokenType.FUN): return self.fun_declaration('function')
+        if self.match(TokenType.FN ): return self.fn_declaration('function')
 
         return self.statement()
 
@@ -91,7 +90,7 @@ class Parser:
         self.consume(TokenType.SEMICOLON, 'expect \';\' after variable declaration')
         return Var(name, init)
 
-    def fun_declaration(self, kind):
+    def fn_declaration(self, kind):
         name   = self.consume(TokenType.IDENTIFIER, f'expect {kind} name')
         params = []
 
@@ -281,10 +280,10 @@ class Parser:
         expr = self.primary()
 
         while True:
-            if self.match(TokenType.LEFT_PAREN):
-                expr = self.finish_call(expr)
-            else:
+            if not self.match(TokenType.LEFT_PAREN):
                 break
+
+            expr = self.finish_call(expr)
 
         return expr
 
