@@ -18,7 +18,8 @@ class LoxCallable(ABC):
         pass
 
 class LoxFunction(LoxCallable):
-    def __init__(self, declaration):
+    def __init__(self, closure, declaration):
+        self.closure = closure
         self.declaration = declaration
 
     def __str__(self):
@@ -28,7 +29,7 @@ class LoxFunction(LoxCallable):
         return len(self.declaration.params)
 
     def call(self, interpreter, arguments):
-        environment = Environment(interpreter.globals)
+        environment = Environment(self.closure)
 
         for i, param in enumerate(self.declaration.params):
             environment.define(param.lexeme, arguments[i])

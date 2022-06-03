@@ -122,7 +122,8 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return value
 
     def visit_function_stmt(self, stmt):
-        self.environment.define(stmt.name.lexeme, LoxFunction(stmt))
+        self.environment.define(
+            stmt.name.lexeme, LoxFunction(self.environment, stmt))
 
     def visit_if_stmt(self, stmt):
         if bool(self.evaluate(stmt.condition)):
