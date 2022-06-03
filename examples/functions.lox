@@ -1,0 +1,25 @@
+fn pow(x, u) {
+    var ret = 1;
+
+    for (var i = 0; i < u; i = i + 1) {
+        ret = ret * x;
+    }
+
+    return ret;
+}
+
+fn sqrt(x, max) {
+    var ret = 1;
+
+    for (var i = 0; i < max; i = i + 1) {
+        ret = ret - (pow(ret, 2) - x) / (2 * ret);
+    }
+
+    return ret;
+}
+
+fn main() {
+    print "sqrt: " + sqrt(pow(72727, 2), 21);
+}
+
+main();
