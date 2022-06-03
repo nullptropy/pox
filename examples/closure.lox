@@ -1,0 +1,21 @@
+fn fib_calculator() {
+    var a = -1;
+    var b = 1;
+    var c;
+
+    fn count() {
+        c = a + b;
+        a = b;
+        b = c;
+
+        return c;
+    }
+
+    return count;
+}
+
+var next = fib_calculator();
+
+for (var i = 0; i < 100; i = i + 1) {
+    print next();
+}
