@@ -9,7 +9,7 @@ decleration
     ;
 
 funDecl
-    : "fun" function
+    : "fn" function
     ;
 
 function
