@@ -19,6 +19,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_get_expr(self, expr):
+        pass
+
+    @abstractmethod
     def visit_literal_expr(self, expr):
         pass
 
@@ -62,6 +66,14 @@ class Grouping(Expr):
 
     def accept(self, visitor):
         return visitor.visit_grouping_expr(self)
+
+class Get(Expr):
+    def __init__(self, object, name):
+        self.object = object
+        self.name = name
+
+    def accept(self, visitor):
+        return visitor.visit_get_expr(self)
 
 class Literal(Expr):
     def __init__(self, value):

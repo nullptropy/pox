@@ -60,6 +60,7 @@ def main():
             ['Binary', 'lt', 'op', 'rt'],
             ['Call', 'callee', 'paren', 'arguments'],
             ['Grouping', 'expression'],
+            ['Get', 'object', 'name'],
             ['Literal', 'value'],
             ['Logical', 'lt', 'op', 'rt'],
             ['Unary', 'op', 'expression'],

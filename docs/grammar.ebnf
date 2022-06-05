@@ -105,7 +105,7 @@ unary
     ;
 
 call
-    : primary ( "(" ( expression ( ", " expression )* )? ")" )*
+    : primary ( "(" ( expression ( ", " expression )* )? ")" | "." IDENTIFIER )*
     ;
 
 primary
