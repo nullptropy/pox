@@ -24,7 +24,7 @@ class Resolver(ExprVisitor, StmtVisitor):
             n.accept(self)
 
     def resolve_local(self, expr, name):
-        for i in reversed(range(0, len(self.scopes))):
+        for i in range(0, len(self.scopes))[::-1]:
             if name.lexeme in self.scopes[i]:
                 return self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
 
@@ -37,7 +37,7 @@ class Resolver(ExprVisitor, StmtVisitor):
             self.declare(param)
             self.define(param)
 
-        self.resolve(function.body)
+        self.resolve(*function.body.statements)
         self.end_scope()
         self.curr_fn = enclosing_fn
 
