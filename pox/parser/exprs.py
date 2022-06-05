@@ -7,6 +7,10 @@ class Expr:
 
 class ExprVisitor(ABC):
     @abstractmethod
+    def visit_assign_expr(self, expr):
+        pass
+
+    @abstractmethod
     def visit_binary_expr(self, expr):
         pass
 
@@ -31,6 +35,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_set_expr(self, expr):
+        pass
+
+    @abstractmethod
     def visit_unary_expr(self, expr):
         pass
 
@@ -38,9 +46,13 @@ class ExprVisitor(ABC):
     def visit_variable_expr(self, expr):
         pass
 
-    @abstractmethod
-    def visit_assign_expr(self, expr):
-        pass
+class Assign(Expr):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_assign_expr(self)
 
 class Binary(Expr):
     def __init__(self, lt, op, rt):
@@ -91,6 +103,15 @@ class Logical(Expr):
     def accept(self, visitor):
         return visitor.visit_logical_expr(self)
 
+class Set(Expr):
+    def __init__(self, object, name, value):
+        self.object = object
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_set_expr(self)
+
 class Unary(Expr):
     def __init__(self, op, expression):
         self.op = op
@@ -105,11 +126,3 @@ class Variable(Expr):
 
     def accept(self, visitor):
         return visitor.visit_variable_expr(self)
-
-class Assign(Expr):
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-    def accept(self, visitor):
-        return visitor.visit_assign_expr(self)

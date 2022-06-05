@@ -71,7 +71,7 @@ expression
     ;
 
 assignment
-    : IDENTIFIER "=" assignment
+    : ( call "." )? IDENTIFIER "=" assignment
     | logic_or
     ;
 

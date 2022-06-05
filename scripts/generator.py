@@ -57,15 +57,16 @@ def main():
     exprs = (
         'Expr',
         [
+            ['Assign', 'name', 'value'],
             ['Binary', 'lt', 'op', 'rt'],
             ['Call', 'callee', 'paren', 'arguments'],
             ['Grouping', 'expression'],
             ['Get', 'object', 'name'],
             ['Literal', 'value'],
             ['Logical', 'lt', 'op', 'rt'],
+            ['Set', 'object', 'name', 'value'],
             ['Unary', 'op', 'expression'],
             ['Variable', 'name'],
-            ['Assign', 'name', 'value'],
         ]
     )
 
