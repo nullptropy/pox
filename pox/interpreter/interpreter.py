@@ -15,6 +15,7 @@ def check_number_operands(operator, *operands):
 
 class Interpreter(ExprVisitor, StmtVisitor):
     def __init__(self):
+        self.locals = {}
         self.globals = Environment()
         self.environment = self.globals
 
@@ -27,6 +28,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 self.execute(stmt)
         except RuntimeError as err:
             pox.report_error(err)
+
+    def resolve(self, expr, depth):
+        self.locals[expr] = depth
 
     def execute(self, stmt):
         return stmt.accept(self)
@@ -42,6 +46,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
                     self.execute(stmt)
         finally:
             self.environment = previous
+
+    def look_up_variable(self, name, expr):
+        if distance := self.locals.get(expr):
+            return self.environment.get_at(distance, name.lexeme)
+
+        return self.globals.get(name)
 
     def visit_binary_expr(self, expr):
         lt = self.evaluate(expr.lt)
@@ -114,12 +124,15 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return function.call(self, arguments)
 
     def visit_variable_expr(self, expr):
-        return self.environment.get(expr.name)
+        return self.look_up_variable(expr.name, expr)
 
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
-        self.environment.assign(expr.name, value)
-        return value
+
+        if distance := self.locals.get(expr):
+            return self.environment.assign_at(distance, expr.name, value) or value
+
+        return self.globals.assign(expr.name, value) or value
 
     def visit_function_stmt(self, stmt):
         self.environment.define(

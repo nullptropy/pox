@@ -3,8 +3,8 @@
 import sys
 import readline as _
 
-from pox.parser import Parser
 from pox.scanner import Scanner
+from pox.parser import Parser, Resolver
 from pox.interpreter import Interpreter, RuntimeError
 
 class Pox:
@@ -13,13 +13,13 @@ class Pox:
         self.runtime_error_occured = False
 
     def report_error(self, error):
-        match error:
-            case RuntimeError():
-                self.runtime_error_occured = True
-            case _:
-                self.error_occured = True
-
         print(error)
+
+        if isinstance(error, RuntimeError):
+            self.runtime_error_occured = True
+            return
+
+        self.error_occured = True
 
     def repl(self):
         interpreter = Interpreter()
@@ -50,10 +50,16 @@ class Pox:
     def run(self, source, interpreter):
         statements = self.parse(self.tokenize(source))
 
+        if not self.error_occured:
+            resolver = Resolver(self, interpreter)
+            resolver.resolve(*statements)
+
+        if not self.error_occured:
+            interpreter.interpret(statements, self)
+
         if self.error_occured:
             return 65
 
-        interpreter.interpret(statements, self)
         return 70 if self.runtime_error_occured else 0
 
     def tokenize(self, source):
