@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from abc import ABC, abstractmethod
-
 from .environment import Environment
+
+from pox.error import RuntimeError
 
 class ReturnException(Exception):
     def __init__(self, value):
@@ -38,3 +39,33 @@ class LoxFunction(LoxCallable):
             interpreter.execute_block(self.declaration.body, environment)
         except ReturnException as return_value:
             return return_value.value
+
+class LoxInstance:
+    def __init__(self, pclass):
+        self.fields = {}
+        self.pclass = pclass
+
+    def __str__(self):
+        return f'<class instance {self.pclass.name}>'
+
+    def get(self, name):
+        if name.lexeme in self.fields:
+            return self.fields[name.lexeme]
+
+        raise RuntimeError(name, f'undefined property \'{name.lexeme}\'')
+
+    def set(self, name, value):
+        self.fields.update({name.lexeme: value})
+
+class LoxClass(LoxCallable):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return f'<class {self.name}>'
+
+    def arity(self):
+        return 0
+
+    def call(self, interpreter, arguments):
+        return LoxInstance(self)
