@@ -10,6 +10,7 @@ class FunctionType(Enum):
     NONE = auto()
     METHOD = auto()
     FUNCTION = auto()
+    INITIALIZER = auto()
 
 class ClassType(Enum):
     NONE = auto()
@@ -133,7 +134,9 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.scopes[-1].update({'this': True})
 
         for method in stmt.methods:
-            self.resolve_function(method, FunctionType.METHOD)
+            self.resolve_function(
+                method, FunctionType.INITIALIZER \
+                        if method.name.lexeme == 'init' else FunctionType.METHOD)
 
         self.end_scope()
         self.curr_cl = enclosing_cl
@@ -169,6 +172,10 @@ class Resolver(ExprVisitor, StmtVisitor):
         if self.curr_fn == FunctionType.NONE:
             self.pox.report_error(
                 ResolveError(stmt.keyword, 'can\'t return from top-level code'))
+
+        if stmt.value and self.curr_fn == FunctionType.INITIALIZER:
+            self.pox.report_error(
+                ResolveError(stmt.keyword, 'can\'t return from an initializer'))
 
         if stmt.value:
             self.resolve(stmt.value)
