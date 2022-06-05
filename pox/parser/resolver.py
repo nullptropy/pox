@@ -11,11 +11,16 @@ class FunctionType(Enum):
     METHOD = auto()
     FUNCTION = auto()
 
+class ClassType(Enum):
+    NONE = auto()
+    CLASS = auto()
+
 class Resolver(ExprVisitor, StmtVisitor):
     def __init__(self, pox, interpreter):
-        self.curr_fn = FunctionType.NONE
-
         self.scopes = []
+
+        self.curr_fn = FunctionType.NONE
+        self.curr_cl = ClassType.NONE
 
         self.pox = pox
         self.interpreter = interpreter
@@ -91,6 +96,13 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.resolve(expr.object)
         self.resolve(expr.value)
 
+    def visit_this_expr(self, expr):
+        if self.curr_cl == ClassType.NONE:
+            return self.pox.report_error(
+                ResolveError(expr.keyword, 'can\'t use \'this\' outside of a class'))
+
+        self.resolve_local(expr, expr.keyword)
+
     def visit_unary_expr(self, expr):
         self.resolve(expr.expression)
 
@@ -111,11 +123,20 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.end_scope()
 
     def visit_class_stmt(self, stmt):
+        enclosing_cl = self.curr_cl
+        self.curr_cl = ClassType.CLASS
+
         self.declare(stmt.name)
         self.define(stmt.name)
 
+        self.begin_scope()
+        self.scopes[-1].update({'this': True})
+
         for method in stmt.methods:
             self.resolve_function(method, FunctionType.METHOD)
+
+        self.end_scope()
+        self.curr_cl = enclosing_cl
 
     def visit_var_stmt(self, stmt):
         self.declare(stmt.name)

@@ -311,6 +311,7 @@ class Parser:
         if self.match(TokenType.NIL): return Literal(None)
         if self.match(TokenType.TRUE): return Literal(True)
         if self.match(TokenType.FALSE): return Literal(False)
+        if self.match(TokenType.THIS): return This(self.previous())
 
         if self.match(TokenType.IDENTIFIER):
             return Variable(self.previous())

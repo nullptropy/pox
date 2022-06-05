@@ -40,6 +40,12 @@ class LoxFunction(LoxCallable):
         except ReturnException as return_value:
             return return_value.value
 
+    def bind(self, instance):
+        environment = Environment(self.closure)
+        environment.define('this', instance)
+
+        return LoxFunction(environment, self.declaration)
+
 class LoxInstance:
     def __init__(self, pclass):
         self.fields = {}
@@ -53,7 +59,7 @@ class LoxInstance:
             return self.fields[name.lexeme]
 
         if method := self.pclass.find_method(name.lexeme):
-            return method
+            return method.bind(self)
 
         raise RuntimeError(name, f'undefined property \'{name.lexeme}\'')
 
