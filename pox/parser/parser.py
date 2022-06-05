@@ -294,10 +294,13 @@ class Parser:
         expr = self.primary()
 
         while True:
-            if not self.match(TokenType.LEFT_PAREN):
+            if self.match(TokenType.LEFT_PAREN):
+                expr = self.finish_call(expr)
+            elif self.match(TokenType.DOT):
+                name = self.consume(TokenType.IDENTIFIER, 'except property name after \'.\'')
+                expr = Get(expr, name)
+            else:
                 break
-
-            expr = self.finish_call(expr)
 
         return expr
 
