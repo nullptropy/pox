@@ -19,9 +19,10 @@ class LoxCallable(ABC):
         pass
 
 class LoxFunction(LoxCallable):
-    def __init__(self, closure, declaration):
+    def __init__(self, closure, declaration, initializer):
         self.closure = closure
         self.declaration = declaration
+        self.initializer = initializer
 
     def __str__(self):
         return f'<fn {self.declaration.name.lexeme}>'
@@ -40,11 +41,14 @@ class LoxFunction(LoxCallable):
         except ReturnException as return_value:
             return return_value.value
 
+        if self.initializer:
+            return self.closure.get_at(0, 'this')
+
     def bind(self, instance):
         environment = Environment(self.closure)
         environment.define('this', instance)
 
-        return LoxFunction(environment, self.declaration)
+        return LoxFunction(environment, self.declaration, self.initializer)
 
 class LoxInstance:
     def __init__(self, pclass):
@@ -78,7 +82,15 @@ class LoxClass(LoxCallable):
         return self.methods.get(name)
 
     def arity(self):
+        if init := self.find_method('init'):
+            return init.arity()
+
         return 0
 
     def call(self, interpreter, arguments):
-        return LoxInstance(self)
+        instance = LoxInstance(self)
+
+        if init := self.find_method('init'):
+            init.bind(instance).call(interpreter, arguments)
+
+        return instance

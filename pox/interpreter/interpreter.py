@@ -158,7 +158,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_function_stmt(self, stmt):
         self.environment.define(
-            stmt.name.lexeme, LoxFunction(self.environment, stmt))
+            stmt.name.lexeme, LoxFunction(self.environment, stmt, False))
 
     def visit_if_stmt(self, stmt):
         if bool(self.evaluate(stmt.condition)):
@@ -174,8 +174,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         methods = {}
         for method in stmt.methods:
+            name = method.name.lexeme
             methods.update({
-                method.name.lexeme: LoxFunction(self.environment, method)})
+                name: LoxFunction(self.environment, method, name == 'init')})
 
         self.environment.assign(
             stmt.name, LoxClass(stmt.name.lexeme, methods))
