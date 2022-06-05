@@ -47,11 +47,6 @@ class Resolver(ExprVisitor, StmtVisitor):
     def end_scope(self):
         self.scopes.pop()
 
-    def visit_block_stmt(self, stmt):
-        self.begin_scope()
-        self.resolve(*stmt.statements)
-        self.end_scope()
-
     def declare(self, name):
         if not self.scopes:
             return None
@@ -81,12 +76,19 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visit_grouping_expr(self, expr):
         self.resolve(expr.expression)
 
+    def visit_get_expr(self, expr):
+        self.resolve(expr.object)
+
     def visit_literal_expr(self, _):
         pass
 
     def visit_logical_expr(self, expr):
         self.resolve(expr.lt)
         self.resolve(expr.rt)
+
+    def visit_set_expr(self, expr):
+        self.resolve(expr.object)
+        self.resolve(expr.value)
 
     def visit_unary_expr(self, expr):
         self.resolve(expr.expression)
@@ -101,6 +103,15 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visit_assign_expr(self, expr):
         self.resolve(expr.value)
         self.resolve_local(expr, expr.name)
+
+    def visit_block_stmt(self, stmt):
+        self.begin_scope()
+        self.resolve(*stmt.statements)
+        self.end_scope()
+
+    def visit_class_stmt(self, stmt):
+        self.declare(stmt.name)
+        self.define(stmt.name)
 
     def visit_var_stmt(self, stmt):
         self.declare(stmt.name)

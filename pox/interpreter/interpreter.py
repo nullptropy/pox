@@ -6,7 +6,7 @@ from pox.utils import number, stringify
 from pox.scanner import TokenType
 from pox.parser import ExprVisitor, StmtVisitor
 
-from .callable import LoxCallable, LoxFunction, ReturnException
+from .callable import *
 from .environment import Environment
 
 def check_number_operands(operator, *operands):
@@ -86,6 +86,14 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_grouping_expr(self, expr):
         return self.evaluate(expr.expression)
 
+    def visit_get_expr(self, expr):
+        object = self.evaluate(expr.object)
+
+        if isinstance(object, LoxInstance):
+            return object.get(expr.name)
+
+        raise RuntimeError(expr.name, 'only instances have properties')
+
     def visit_literal_expr(self, expr):
         return expr.value
 
@@ -98,6 +106,17 @@ class Interpreter(ExprVisitor, StmtVisitor):
             if not bool(lt): return lt
 
         return self.evaluate(expr.rt)
+
+    def visit_set_expr(self, expr):
+        object = self.evaluate(expr.object)
+
+        if not isinstance(object, LoxInstance):
+            raise RuntimeError(expr.name, 'only instances have fields')
+
+        value = self.evaluate(expr.value)
+        object.set(expr.name, value)
+
+        return value
 
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.expression)
@@ -146,6 +165,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_block_stmt(self, stmt):
         self.execute_block(stmt, Environment(self.environment))
+
+    def visit_class_stmt(self, stmt):
+        self.environment.define(
+            stmt.name.lexeme, LoxClass(stmt.name.lexeme))
 
     def visit_var_stmt(self, stmt):
         self.environment.define(
