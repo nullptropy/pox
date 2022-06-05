@@ -3,3 +3,4 @@
 from .exprs import Expr, ExprVisitor
 from .stmts import Stmt, StmtVisitor
 from .parser import Parser, ParseError
+from .resolver import Resolver
