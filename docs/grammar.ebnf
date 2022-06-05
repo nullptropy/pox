@@ -3,9 +3,14 @@ program
     ;
 
 decleration
-    : funDecl
+    : classDecl
+    | funDecl
     | varDecl
     | statement
+    ;
+
+classDecl
+    : "class" IDENTIFIER "{" function* "}"
     ;
 
 funDecl
