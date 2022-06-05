@@ -167,8 +167,15 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.execute_block(stmt, Environment(self.environment))
 
     def visit_class_stmt(self, stmt):
-        self.environment.define(
-            stmt.name.lexeme, LoxClass(stmt.name.lexeme))
+        self.environment.define(stmt.name.lexeme, None)
+
+        methods = {}
+        for method in stmt.methods:
+            methods.update({
+                method.name.lexeme: LoxFunction(self.environment, method)})
+
+        self.environment.assign(
+            stmt.name, LoxClass(stmt.name.lexeme, methods))
 
     def visit_var_stmt(self, stmt):
         self.environment.define(

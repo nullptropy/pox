@@ -8,6 +8,7 @@ from enum import Enum, auto
 
 class FunctionType(Enum):
     NONE = auto()
+    METHOD = auto()
     FUNCTION = auto()
 
 class Resolver(ExprVisitor, StmtVisitor):
@@ -112,6 +113,9 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visit_class_stmt(self, stmt):
         self.declare(stmt.name)
         self.define(stmt.name)
+
+        for method in stmt.methods:
+            self.resolve_function(method, FunctionType.METHOD)
 
     def visit_var_stmt(self, stmt):
         self.declare(stmt.name)

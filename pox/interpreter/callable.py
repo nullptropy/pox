@@ -52,17 +52,24 @@ class LoxInstance:
         if name.lexeme in self.fields:
             return self.fields[name.lexeme]
 
+        if method := self.pclass.find_method(name.lexeme):
+            return method
+
         raise RuntimeError(name, f'undefined property \'{name.lexeme}\'')
 
     def set(self, name, value):
         self.fields.update({name.lexeme: value})
 
 class LoxClass(LoxCallable):
-    def __init__(self, name):
+    def __init__(self, name, methods):
         self.name = name
+        self.methods = methods
 
     def __str__(self):
         return f'<class {self.name}>'
+
+    def find_method(self, name):
+        return self.methods.get(name)
 
     def arity(self):
         return 0
