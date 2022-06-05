@@ -75,8 +75,9 @@ class Parser:
         return statements
 
     def declaration(self):
-        if self.match(TokenType.VAR): return self.var_declaration()
-        if self.match(TokenType.FN ): return self.fn_declaration('function')
+        if self.match(TokenType.CLASS): return self.class_declaration()
+        if self.match(TokenType.VAR)  : return self.var_declaration()
+        if self.match(TokenType.FN)   : return self.fn_declaration('function')
 
         return self.statement()
 
@@ -106,6 +107,19 @@ class Parser:
         self.consume(TokenType.LEFT_BRACE, f'expect \'{{\' before {kind} body')
 
         return Function(name, params, self.block_statement())
+
+    def class_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, 'expect class name')
+        methods = []
+
+        self.consume(TokenType.LEFT_BRACE, 'except \'{\' after class name')
+
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            # self.consume(TokenType.FN, 'expect \'fn\' before method name')
+            methods.append(self.fn_declaration('method'))
+
+        self.consume(TokenType.RIGHT_BRACE, 'expect \'}\' after class body')
+        return Class(name, methods)
 
     def statement(self):
         if self.match(TokenType.IF): return self.if_statement()
