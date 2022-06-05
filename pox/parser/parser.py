@@ -217,6 +217,9 @@ class Parser:
             if isinstance(expr, Variable):
                 return Assign(expr.name, rvalue)
 
+            elif isinstance(expr, Get):
+                return Set(expr.object, expr.name, rvalue)
+
             raise ParseError(equals, 'invalid assign target')
 
         return expr
