@@ -62,7 +62,8 @@ class Scanner:
 
             case '\'' | '"': return self.scan_string(c)
             case _ if c.isdigit(): return self.scan_number()
-            case _ if c.isalpha(): return self.scan_identifier()
+            case _ if c.isalpha() \
+                or c == '_': return self.scan_identifier()
 
             case _:
                 raise self.error(f'unexpected character: {repr(c)}')
