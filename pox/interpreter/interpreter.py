@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from pox.error import RuntimeError
-from pox.utils import number, stringify
+from pox.utils import number
 
 from pox.scanner import TokenType
 from pox.parser import ExprVisitor, StmtVisitor
 
+from .native import init_native_functions
 from .callable import *
 from .environment import Environment
 
@@ -18,6 +19,8 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.locals = {}
         self.globals = Environment()
         self.environment = self.globals
+
+        init_native_functions(self)
 
     def evaluate(self, expr):
         return expr.accept(self)
