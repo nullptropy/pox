@@ -35,7 +35,6 @@ statement
     | block
     ;
 
-
 exprStmt
     : expression ";"
     ;
@@ -116,4 +115,5 @@ primary
     | 'nil'
     | "(" expression ")"
     | IDENTIFIER
+    | "super" "." IDENTIFIER;
     ;

@@ -65,6 +65,7 @@ def main():
             ['Literal', 'value'],
             ['Logical', 'lt', 'op', 'rt'],
             ['Set', 'object', 'name', 'value'],
+            ['Super', 'keyword', 'method'],
             ['This', 'keyword'],
             ['Unary', 'op', 'expression'],
             ['Variable', 'name'],
