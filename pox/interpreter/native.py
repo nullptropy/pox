@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from pox.utils import stringify
-from pox.interpreter.callable import LoxCallable
+from pox.interpreter.callable import PoxCallable
 
-class NativeFunction(LoxCallable):
+class NativeFunction(PoxCallable):
     def __str__(self):
         return f'<native fn {self.name}>'
 

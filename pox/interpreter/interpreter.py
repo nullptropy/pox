@@ -92,7 +92,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_get_expr(self, expr):
         object = self.evaluate(expr.object)
 
-        if isinstance(object, LoxInstance):
+        if isinstance(object, PoxInstance):
             return object.get(expr.name)
 
         raise RuntimeError(expr.name, 'only instances have properties')
@@ -113,7 +113,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_set_expr(self, expr):
         object = self.evaluate(expr.object)
 
-        if not isinstance(object, LoxInstance):
+        if not isinstance(object, PoxInstance):
             raise RuntimeError(expr.name, 'only instances have fields')
 
         value = self.evaluate(expr.value)
@@ -149,7 +149,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         function  = self.evaluate(expr.callee)
         arguments = list(map(self.evaluate, expr.arguments))
 
-        if not isinstance(function, LoxCallable):
+        if not isinstance(function, PoxCallable):
             raise RuntimeError(expr.paren, 'can only call functions and classes')
 
         if len(arguments) != function.arity():
@@ -172,7 +172,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_function_stmt(self, stmt):
         self.environment.define(
-            stmt.name.lexeme, LoxFunction(self.environment, stmt, False))
+            stmt.name.lexeme, PoxFunction(self.environment, stmt, False))
 
     def visit_if_stmt(self, stmt):
         if bool(self.evaluate(stmt.condition)):
@@ -187,7 +187,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         if superclass := stmt.superclass:
             superclass = self.evaluate(superclass)
 
-            if not isinstance(superclass, LoxClass):
+            if not isinstance(superclass, PoxClass):
                 raise RuntimeError(
                     stmt.superclass.name, '`superclass` must be a class')
 
@@ -201,13 +201,13 @@ class Interpreter(ExprVisitor, StmtVisitor):
         for method in stmt.methods:
             name = method.name.lexeme
             methods.update({
-                name: LoxFunction(self.environment, method, name == 'init')})
+                name: PoxFunction(self.environment, method, name == 'init')})
 
         if stmt.superclass:
             self.environment = self.environment.enclosing
 
         self.environment.assign(
-            stmt.name, LoxClass(stmt.name.lexeme, superclass, methods))
+            stmt.name, PoxClass(stmt.name.lexeme, superclass, methods))
 
     def visit_let_stmt(self, stmt):
         self.environment.define(

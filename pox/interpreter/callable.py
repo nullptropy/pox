@@ -9,7 +9,7 @@ class ReturnException(Exception):
     def __init__(self, value):
         self.value = value
 
-class LoxCallable(ABC):
+class PoxCallable(ABC):
     @abstractmethod
     def arity(self):
         pass
@@ -18,7 +18,7 @@ class LoxCallable(ABC):
     def call(self, interpreter, arguments):
         pass
 
-class LoxFunction(LoxCallable):
+class PoxFunction(PoxCallable):
     def __init__(self, closure, declaration, initializer):
         self.closure = closure
         self.declaration = declaration
@@ -49,9 +49,9 @@ class LoxFunction(LoxCallable):
         environment = Environment(self.closure)
         environment.define('this', instance)
 
-        return LoxFunction(environment, self.declaration, self.initializer)
+        return PoxFunction(environment, self.declaration, self.initializer)
 
-class LoxInstance:
+class PoxInstance:
     def __init__(self, pclass):
         self.fields = {}
         self.pclass = pclass
@@ -71,7 +71,7 @@ class LoxInstance:
     def set(self, name, value):
         self.fields.update({name.lexeme: value})
 
-class LoxClass(LoxCallable):
+class PoxClass(PoxCallable):
     def __init__(self, name, superclass, methods):
         self.name = name
         self.methods = methods
@@ -94,7 +94,7 @@ class LoxClass(LoxCallable):
         return 0
 
     def call(self, interpreter, arguments):
-        instance = LoxInstance(self)
+        instance = PoxInstance(self)
 
         if init := self.find_method('init'):
             init.bind(instance).call(interpreter, arguments)
