@@ -28,7 +28,6 @@ varDecl
 statement
     : exprStmt
     | ifStmt
-    | printStmt
     | forStmt
     | returnStmt
     | whileStmt
@@ -41,10 +40,6 @@ exprStmt
 
 ifStmt
     : "if (" expression ")" statement ( "else" statement )?
-    ;
-
-printStmt
-    : "print" expression ";"
     ;
 
 forStmt

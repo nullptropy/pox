@@ -80,7 +80,6 @@ def main():
             ['Expression', 'expression'],
             ['Function', 'name', 'params', 'body'],
             ['If', 'condition', 'then_branch', 'else_branch'],
-            ['Print', 'expression'],
             ['Return', 'keyword', 'value'],
             ['Let', 'name', 'initializer'],
             ['While', 'condition', 'body'],

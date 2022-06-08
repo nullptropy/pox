@@ -7,8 +7,8 @@ from pox.parser.exprs import *
 from pox.parser.stmts import *
 
 SYNC_TOKENS = [
-    TokenType.IF, TokenType.FOR, TokenType.LET, TokenType.FN,
-    TokenType.PRINT, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
+    TokenType.IF, TokenType.FOR, TokenType.LET,
+    TokenType.FN, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
 
 class Parser:
     current = 0
@@ -130,7 +130,6 @@ class Parser:
     def statement(self):
         if self.match(TokenType.IF): return self.if_statement()
         if self.match(TokenType.FOR): return self.for_statement()
-        if self.match(TokenType.PRINT): return self.print_statement()
         if self.match(TokenType.RETURN): return self.return_statement()
         if self.match(TokenType.WHILE): return self.while_statement()
         if self.match(TokenType.LEFT_BRACE): return self.block_statement()
@@ -158,11 +157,6 @@ class Parser:
 
         self.consume(TokenType.RIGHT_BRACE, 'expect \'}\' after')
         return Block(statements)
-
-    def print_statement(self):
-        value = self.expression()
-        self.consume(TokenType.SEMICOLON, 'expect \';\' after value')
-        return Print(value)
 
     def return_statement(self):
         value = None

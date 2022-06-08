@@ -191,9 +191,6 @@ class Resolver(ExprVisitor, StmtVisitor):
         if stmt.else_branch:
             self.resolve(stmt.else_branch)
 
-    def visit_print_stmt(self, stmt):
-        self.resolve(stmt.expression)
-
     def visit_return_stmt(self, stmt):
         if self.curr_fn == FunctionType.NONE:
             self.pox.report_error(

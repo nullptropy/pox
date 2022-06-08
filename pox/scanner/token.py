@@ -14,7 +14,7 @@ TokenType = Enum('TokenType', '''
     IDENTIFIER STRING NUMBER
 
     AND CLASS ELSE FALSE FN FOR IF NIL OR
-    PRINT RETURN SUPER THIS TRUE LET WHILE
+    RETURN SUPER THIS TRUE LET WHILE
 
     EOF
 ''')
@@ -22,7 +22,7 @@ TokenType = Enum('TokenType', '''
 # this depends on all of the keywords being back to back
 # and taking values in the range `[23, 39)`
 RESERVED_KEYWORDS = {
-    TokenType(n).name.lower(): TokenType(n) for n in range(23, 39)}
+    TokenType(n).name.lower(): TokenType(n) for n in range(23, 38)}
 
 class Token:
     def __init__(self, type, lexeme, literal, line):

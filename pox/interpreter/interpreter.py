@@ -218,8 +218,5 @@ class Interpreter(ExprVisitor, StmtVisitor):
         while bool(self.evaluate(stmt.condition)):
             self.execute(stmt.body)
 
-    def visit_print_stmt(self, stmt):
-        print(stringify(self.evaluate(stmt.expression)))
-
     def visit_return_stmt(self, stmt):
         raise ReturnException(self.evaluate(stmt.value) if stmt.value else None)
