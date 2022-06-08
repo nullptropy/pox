@@ -1,0 +1,81 @@
+class Node {
+    init(data) {
+        this.prev = nil;
+        this.next = nil;
+        this.data = data;
+    }
+}
+
+class List {
+    init() {
+        this.len = 0;
+        this.head = nil;
+        this.tail = nil;
+    }
+
+    get(n) {
+        let i = 0;
+        let node = this.head;
+
+        while (node != nil) {
+            if (i == n)
+                return node.data;
+
+            i = i + 1;
+            node = node.next;
+        }
+    }
+
+    pop() {
+        if (this.tail == nil)
+            return;
+
+        let node  = this.tail;
+        this.tail = node.prev;
+
+        if (this.tail != nil)
+            this.tail.next = nil;
+        else
+            this.head = nil;
+
+        this.len = this.len - 1;
+        return node.data;
+    }
+
+    push(data) {
+        let node = Node(data);
+
+        if (this.head == nil) {
+            this.head = node;
+            this.tail = node;
+        } else {
+            node.prev = this.tail;
+            this.tail.next = node;
+            this.tail = node;
+        }
+
+        this.len = this.len + 1;
+    }
+}
+
+fn print_(text) {
+    print text;
+}
+
+fn map(func, list) {
+    for (let i = 0; i < list.len; i = i + 1) {
+        func(list.get(i));
+    }
+}
+
+fn main() {
+    let list = List();
+
+    for (let i = 0; i < 100; i = i + 1) {
+        list.push(i);
+    }
+
+    map(print_, list);
+}
+
+main();
