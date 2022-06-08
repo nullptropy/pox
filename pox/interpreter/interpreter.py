@@ -118,6 +118,17 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         return value
 
+    def visit_super_expr(self, expr):
+        distance = self.locals.get(expr)
+
+        superclass = self.environment.get_at(distance, 'super')
+        object = self.environment.get_at(distance - 1, 'this')
+
+        if method := superclass.find_method(expr.method.lexeme):
+            return method.bind(object)
+
+        raise RuntimeError(expr.method, f'undefined property {expr.method.lexeme}')
+
     def visit_this_expr(self, expr):
         return self.look_up_variable(expr.keyword, expr)
 
@@ -179,11 +190,18 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         self.environment.define(stmt.name.lexeme, None)
 
+        if stmt.superclass:
+            self.environment = Environment(self.environment)
+            self.environment.define('super', superclass)
+
         methods = {}
         for method in stmt.methods:
             name = method.name.lexeme
             methods.update({
                 name: LoxFunction(self.environment, method, name == 'init')})
+
+        if stmt.superclass:
+            self.environment = self.environment.enclosing
 
         self.environment.assign(
             stmt.name, LoxClass(stmt.name.lexeme, superclass, methods))
