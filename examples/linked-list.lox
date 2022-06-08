@@ -58,10 +58,6 @@ class List {
     }
 }
 
-fn print_(text) {
-    print text;
-}
-
 fn map(func, list) {
     for (let i = 0; i < list.len; i = i + 1) {
         func(list.get(i));
@@ -75,7 +71,7 @@ fn main() {
         list.push(i);
     }
 
-    map(print_, list);
+    map(print, list);
 }
 
 main();
