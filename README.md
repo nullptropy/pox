@@ -9,3 +9,5 @@
 - truthiness is implemented with python's [bool](https://docs.python.org/3/library/functions.html#bool) function ([truth testing procedure](https://docs.python.org/3/library/stdtypes.html#truth))
 - `fn` instead of `fun`
 - `let` instead of `var`
+- the `print` statment doesn't exist
+  - [native functions](https://github.com/fxxf/pox/blob/main/pox/interpreter/native.py)
