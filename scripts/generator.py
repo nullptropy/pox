@@ -75,7 +75,7 @@ def main():
         'Stmt',
         [
             ['Block', 'statements'],
-            ['Class', 'name', 'methods'],
+            ['Class', 'name', 'superclass', 'methods'],
             ['Expression', 'expression'],
             ['Function', 'name', 'params', 'body'],
             ['If', 'condition', 'then_branch', 'else_branch'],
