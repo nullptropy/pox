@@ -10,7 +10,7 @@ decleration
     ;
 
 classDecl
-    : "class" IDENTIFIER "{" function* "}"
+    : "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}"
     ;
 
 funDecl
