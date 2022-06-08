@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from abc import ABC, abstractmethod
-from .environment import Environment
 
 from pox.error import RuntimeError
+from pox.interpreter.environment import Environment
 
 class ReturnException(Exception):
     def __init__(self, value):
@@ -72,15 +72,20 @@ class LoxInstance:
         self.fields.update({name.lexeme: value})
 
 class LoxClass(LoxCallable):
-    def __init__(self, name, methods):
+    def __init__(self, name, superclass, methods):
         self.name = name
         self.methods = methods
+        self.superclass = superclass
 
     def __str__(self):
         return f'<class {self.name}>'
 
     def find_method(self, name):
-        return self.methods.get(name)
+        if method := self.methods.get(name):
+            return method
+
+        if self.superclass:
+            return self.superclass.find_method(name)
 
     def arity(self):
         if init := self.find_method('init'):
