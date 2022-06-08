@@ -181,7 +181,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.environment.assign(
             stmt.name, LoxClass(stmt.name.lexeme, methods))
 
-    def visit_var_stmt(self, stmt):
+    def visit_let_stmt(self, stmt):
         self.environment.define(
             stmt.name.lexeme,
             self.evaluate(stmt.initializer) if stmt.initializer else None)

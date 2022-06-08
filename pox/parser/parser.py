@@ -7,7 +7,7 @@ from pox.parser.exprs import *
 from pox.parser.stmts import *
 
 SYNC_TOKENS = [
-    TokenType.IF, TokenType.FOR, TokenType.VAR, TokenType.FN,
+    TokenType.IF, TokenType.FOR, TokenType.LET, TokenType.FN,
     TokenType.PRINT, TokenType.WHILE, TokenType.CLASS, TokenType.RETURN]
 
 class Parser:
@@ -76,7 +76,7 @@ class Parser:
 
     def declaration(self):
         if self.match(TokenType.CLASS): return self.class_declaration()
-        if self.match(TokenType.VAR)  : return self.var_declaration()
+        if self.match(TokenType.LET)  : return self.var_declaration()
         if self.match(TokenType.FN)   : return self.fn_declaration('function')
 
         return self.statement()
@@ -89,7 +89,7 @@ class Parser:
             init = self.expression()
 
         self.consume(TokenType.SEMICOLON, 'expect \';\' after variable declaration')
-        return Var(name, init)
+        return Let(name, init)
 
     def fn_declaration(self, kind):
         name   = self.consume(TokenType.IDENTIFIER, f'expect {kind} name')
@@ -172,7 +172,7 @@ class Parser:
         self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after for')
 
         if self.match(TokenType.SEMICOLON): init = None
-        elif self.match(TokenType.VAR):     init = self.var_declaration()
+        elif self.match(TokenType.LET):     init = self.var_declaration()
         else:                               init = self.expression_statement()
 
         condition = Literal(True) if self.check(TokenType.SEMICOLON) else self.expression()

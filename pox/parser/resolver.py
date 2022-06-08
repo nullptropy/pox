@@ -141,7 +141,7 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.end_scope()
         self.curr_cl = enclosing_cl
 
-    def visit_var_stmt(self, stmt):
+    def visit_let_stmt(self, stmt):
         self.declare(stmt.name)
 
         if stmt.initializer:

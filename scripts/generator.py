@@ -81,7 +81,7 @@ def main():
             ['If', 'condition', 'then_branch', 'else_branch'],
             ['Print', 'expression'],
             ['Return', 'keyword', 'value'],
-            ['Var', 'name', 'initializer'],
+            ['Let', 'name', 'initializer'],
             ['While', 'condition', 'body'],
         ]
     )

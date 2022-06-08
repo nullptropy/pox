@@ -1,7 +1,7 @@
 fn fib_calculator() {
-    var a = -1;
-    var b = 1;
-    var c;
+    let a = -1;
+    let b = 1;
+    let c;
 
     fn count() {
         c = a + b;
@@ -14,8 +14,8 @@ fn fib_calculator() {
     return count;
 }
 
-var next = fib_calculator();
+let next = fib_calculator();
 
-for (var i = 0; i < 100; i = i + 1) {
+for (let i = 0; i < 100; i = i + 1) {
     print next();
 }

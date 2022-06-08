@@ -35,7 +35,7 @@ class StmtVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_var_stmt(self, stmt):
+    def visit_let_stmt(self, stmt):
         pass
 
     @abstractmethod
@@ -97,13 +97,13 @@ class Return(Stmt):
     def accept(self, visitor):
         return visitor.visit_return_stmt(self)
 
-class Var(Stmt):
+class Let(Stmt):
     def __init__(self, name, initializer):
         self.name = name
         self.initializer = initializer
 
     def accept(self, visitor):
-        return visitor.visit_var_stmt(self)
+        return visitor.visit_let_stmt(self)
 
 class While(Stmt):
     def __init__(self, condition, body):

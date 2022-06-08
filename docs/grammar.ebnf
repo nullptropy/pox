@@ -22,7 +22,7 @@ function
     ;
 
 varDecl
-    : "var" IDENTIFIER ( "=" expression )? ";"
+    : "let" IDENTIFIER ( "=" expression )? ";"
     ;
 
 statement
