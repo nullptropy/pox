@@ -130,6 +130,13 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.declare(stmt.name)
         self.define(stmt.name)
 
+        if stmt.superclass:
+            if stmt.name.lexeme == stmt.superclass.name.lexeme:
+                self.pox.report_error(
+                    ResolveError(stmt.superclass.name, 'a class can\'t inherit from itself'))
+
+            self.resolve(stmt.superclass)
+
         self.begin_scope()
         self.scopes[-1].update({'this': True})
 

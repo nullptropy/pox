@@ -110,7 +110,13 @@ class Parser:
 
     def class_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, 'expect class name')
+
         methods = []
+        superclass = None
+
+        if self.match(TokenType.LESS):
+            self.consume(TokenType.IDENTIFIER, 'expect superclass name')
+            superclass = Variable(self.previous())
 
         self.consume(TokenType.LEFT_BRACE, 'except \'{\' after class name')
 
@@ -119,7 +125,7 @@ class Parser:
             methods.append(self.fn_declaration('method'))
 
         self.consume(TokenType.RIGHT_BRACE, 'expect \'}\' after class body')
-        return Class(name, methods)
+        return Class(name, superclass, methods)
 
     def statement(self):
         if self.match(TokenType.IF): return self.if_statement()
