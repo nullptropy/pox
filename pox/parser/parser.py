@@ -330,4 +330,12 @@ class Parser:
             self.consume(TokenType.RIGHT_PAREN, 'expected \')\' after expression')
             return Grouping(expr)
 
+        if self.match(TokenType.SUPER):
+            keyword = self.previous()
+            self.consume(TokenType.DOT, 'expect \'.\' after `super`')
+
+            return Super(
+                keyword,
+                self.consume(TokenType.IDENTIFIER, 'expect superclass method name'))
+
         raise self.error('expect expression')
