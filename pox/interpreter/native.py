@@ -110,6 +110,15 @@ class FLOAT(NativeFunction):
         except ValueError:
             return None
 
+class EXIT(NativeFunction):
+    name = 'exit'
+
+    def arity(self):
+        return 1
+
+    def call(self, _, arguments):
+        exit(arguments[0])
+
 def init_native_functions(interpreter):
     for function in NativeFunction.__subclasses__():
         interpreter.globals.define(function.name, function())
