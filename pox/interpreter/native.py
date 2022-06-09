@@ -57,7 +57,7 @@ class CHR(NativeFunction):
     def call(self, _, arguments):
         try:
             return chr(arguments[0])
-        except TypeError:
+        except Exception:
             return None
 
 class ORD(NativeFunction):
@@ -69,7 +69,7 @@ class ORD(NativeFunction):
     def call(self, _, arguments):
         try:
             return ord(arguments[0])
-        except TypeError:
+        except Exception:
             return None
 
 class STR(NativeFunction):
@@ -112,7 +112,7 @@ class INT(NativeFunction):
     def call(self, _, arguments):
         try:
             return int(arguments[0])
-        except ValueError:
+        except Exception:
             return None
 
 class FLOAT(NativeFunction):
@@ -124,7 +124,7 @@ class FLOAT(NativeFunction):
     def call(self, _, arguments):
         try:
             return float(arguments[0])
-        except ValueError:
+        except Exception:
             return None
 
 class TIME(NativeFunction):
@@ -145,7 +145,7 @@ class SLEEP(NativeFunction):
     def call(self, _, arguments):
         try:
             time.sleep(arguments[0])
-        except TypeError:
+        except Exception:
             pass
 
 class EXIT(NativeFunction):
