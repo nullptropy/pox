@@ -39,7 +39,7 @@ exprStmt
     ;
 
 ifStmt
-    : "if (" expression ")" statement ( "else" statement )?
+    : "if (" expression ")" statement ( "else" "if" "(" expression ")" statement )* ( "else" statement )?
     ;
 
 forStmt

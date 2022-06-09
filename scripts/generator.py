@@ -79,7 +79,7 @@ def main():
             ['Class', 'name', 'superclass', 'methods'],
             ['Expression', 'expression'],
             ['Function', 'name', 'params', 'body'],
-            ['If', 'condition', 'then_branch', 'else_branch'],
+            ['If', 'branches', 'else_branch'],
             ['Return', 'keyword', 'value'],
             ['Let', 'name', 'initializer'],
             ['While', 'condition', 'body'],

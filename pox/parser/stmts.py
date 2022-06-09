@@ -71,9 +71,8 @@ class Function(Stmt):
         return visitor.visit_function_stmt(self)
 
 class If(Stmt):
-    def __init__(self, condition, then_branch, else_branch):
-        self.condition = condition
-        self.then_branch = then_branch
+    def __init__(self, branches, else_branch):
+        self.branches = branches
         self.else_branch = else_branch
 
     def accept(self, visitor):
