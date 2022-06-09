@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import sys
-import readline as _
 
 from pox.scanner import Scanner
 from pox.parser import Parser, Resolver
@@ -22,6 +21,7 @@ class Pox:
         self.error_occured = True
 
     def repl(self):
+        import readline as _
         interpreter = Interpreter()
 
         while True:
@@ -36,7 +36,10 @@ class Pox:
                 print(err)
 
     def run_file(self, path):
-        return self.run(open(path, 'r').read(), Interpreter())
+        try:
+            return self.run(open(path, 'r').read(), Interpreter())
+        except KeyboardInterrupt:
+            return 2
 
     def main(self):
         match len(sys.argv):
