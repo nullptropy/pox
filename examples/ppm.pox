@@ -1,0 +1,137 @@
+// simple PPM encoder implemented with a LinkedList
+
+fn main() {
+    let image = PPM(50, 50, Color(0, 0, 0));
+
+    for (let i = 0; i < image.w; i = i + 1) {
+        image.set_pixel(i, i, Color(0, 255, 0));
+        image.set_pixel(image.w - 1 - i, i, Color(255, 0, 255));
+    }
+
+    image.render();
+}
+
+class Color {
+    init(r, g, b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    str() {
+        return this.r + ' ' + this.g + ' ' + this.b;
+    }
+}
+
+class PPM {
+    init(w, h, color) {
+        this.w = w;
+        this.h = h;
+        
+        this.px = LinkedList();
+        for (let i = 0; i < w * h; i = i + 1)
+            this.px.push(color);
+    }
+
+    set_pixel(x, y, c) {
+        let index = x + y * this.w;
+
+        // it's quite inefficient to create a new function on each call to `set_pixel`
+        // but this is needed since we need access to `index` and `c`
+        fn map_func(i, node) {
+            if (i == index) {
+                node.data = c;
+                return false;
+            }
+        }
+
+        this.px.map(map_func);
+    }
+
+    render() {
+        fn render_pixel(index, node) {
+            println(node.data.str());
+        }
+
+        println('P3');
+        println(this.w + ' ' + this.h);
+        println('255');
+
+        this.px.map(render_pixel);
+    }
+}
+
+class Node {
+    init(data) {
+        this.next = nil;
+        this.prev = nil;
+        this.data = data;
+    }
+}
+
+class LinkedList {
+    init() {
+        this.len = 0;
+        this.head = nil;
+        this.tail = nil;
+    }
+
+    map(func) {
+        let i = 0;
+        let node = this.head;
+
+        while (node != nil) {
+            if (func(i, node) == false)
+                return;
+
+            i = i + 1;
+            node = node.next;
+        }
+    }
+
+    get(n) {
+        let i = 0;
+        let node = this.head;
+
+        while (node != nil) {
+            if (i == n)
+                return node.data;
+
+            i = i + 1;
+            node = node.next;
+        }
+    }
+
+    pop() {
+        if (this.tail == nil)
+            return;
+
+        let node  = this.tail;
+        this.tail = node.prev;
+
+        if (this.tail != nil)
+            this.tail.next = nil;
+        else
+            this.head = nil;
+
+        this.len = this.len - 1;
+        return node.data;
+    }
+
+    push(data) {
+        let node = Node(data);
+
+        if (this.head == nil) {
+            this.head = node;
+            this.tail = node;
+        } else {
+            node.prev = this.tail;
+            this.tail.next = node;
+            this.tail = node;
+        }
+
+        this.len = this.len + 1;
+    }
+}
+
+main();
