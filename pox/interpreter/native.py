@@ -1,11 +1,14 @@
 # coding: utf-8
 
 import sys
+import time
 
 from pox.utils import stringify
 from pox.interpreter.callable import PoxCallable
 
 class NativeFunction(PoxCallable):
+    name = None
+
     def __str__(self):
         return f'<native fn {self.name}>'
 
@@ -114,6 +117,27 @@ class FLOAT(NativeFunction):
             return float(arguments[0])
         except ValueError:
             return None
+
+class TIME(NativeFunction):
+    name = 'time'
+
+    def arity(self):
+        return 0
+
+    def call(self, *_):
+        return time.time()
+
+class SLEEP(NativeFunction):
+    name = 'sleep'
+
+    def arity(self):
+        return 1
+
+    def call(self, _, arguments):
+        try:
+            time.sleep(arguments[0])
+        except TypeError:
+            pass
 
 class EXIT(NativeFunction):
     name = 'exit'

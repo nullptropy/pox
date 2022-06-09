@@ -20,3 +20,5 @@
 - `strlen(string)` returns the length of a given string, `nil` if the passed argument is not a string
 - `strn(string, n)` returns the nth char of a given string, `nil` if n > len(string) or if `string` is not a string
 - `exit(value)` calls [sys.exit](https://docs.python.org/3/library/sys.html#sys.exit) with the given `value`
+- `time()` returns the time in seconds since the epoch as a floating point number 
+- `sleep(secs)` suspend execution of the program for the given number of seconds
