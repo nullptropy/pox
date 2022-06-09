@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import sys
+
 from pox.utils import stringify
 from pox.interpreter.callable import PoxCallable
 
@@ -120,7 +122,7 @@ class EXIT(NativeFunction):
         return 1
 
     def call(self, _, arguments):
-        exit(arguments[0])
+        sys.exit(arguments[0])
 
 def init_native_functions(interpreter):
     for function in NativeFunction.__subclasses__():

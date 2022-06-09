@@ -72,4 +72,4 @@ class Pox:
         return Parser(tokens).parse(self)
 
 if __name__ == '__main__':
-    exit(Pox().main())
+    sys.exit(Pox().main())
