@@ -137,17 +137,24 @@ class Parser:
         return self.expression_statement()
 
     def if_statement(self):
+        branches = []
+        else_branch = None
+
         self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after if')
         condition = self.expression()
         self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after if condition')
+        branches.append((condition, self.statement()))
 
-        then_branch = self.statement()
-        else_branch = None
+        while self.match(TokenType.ELSE) and self.match(TokenType.IF):
+            self.consume(TokenType.LEFT_PAREN, 'expect \'(\' after if')
+            condition = self.expression()
+            self.consume(TokenType.RIGHT_PAREN, 'expect \')\' after if condition')
+            branches.append((condition, self.statement()))
 
-        if self.match(TokenType.ELSE):
+        if self.previous().type == TokenType.ELSE:
             else_branch = self.statement()
 
-        return If(condition, then_branch, else_branch)
+        return If(branches, else_branch)
 
     def block_statement(self):
         statements = []

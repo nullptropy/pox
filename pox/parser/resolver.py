@@ -185,8 +185,9 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.resolve(stmt.expression)
 
     def visit_if_stmt(self, stmt):
-        self.resolve(stmt.condition)
-        self.resolve(stmt.then_branch)
+        for cond, branch in stmt.branches:
+            self.resolve(cond)
+            self.resolve(branch)
 
         if stmt.else_branch:
             self.resolve(stmt.else_branch)
