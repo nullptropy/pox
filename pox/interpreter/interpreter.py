@@ -175,9 +175,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
             stmt.name.lexeme, PoxFunction(self.environment, stmt, False))
 
     def visit_if_stmt(self, stmt):
-        if bool(self.evaluate(stmt.condition)):
-            self.execute(stmt.then_branch)
-        elif stmt.else_branch is not None:
+        for cond, branch in stmt.branches:
+            if bool(self.evaluate(cond)):
+                return self.execute(branch)
+
+        if stmt.else_branch is not None:
             self.execute(stmt.else_branch)
 
     def visit_block_stmt(self, stmt):
