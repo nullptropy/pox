@@ -29,7 +29,7 @@ class Resolver(ExprVisitor, StmtVisitor):
 
     def resolve(self, *args):
         for n in args:
-            n.accept(self)
+            if n: n.accept(self)
 
     def resolve_local(self, expr, name):
         for i in range(0, len(self.scopes))[::-1]:
