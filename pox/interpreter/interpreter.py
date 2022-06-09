@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from pox.error import RuntimeError
-from pox.utils import number
+from pox.utils import number, stringify
 
 from pox.scanner import TokenType
 from pox.parser import ExprVisitor, StmtVisitor
@@ -80,7 +80,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
             case TokenType.PLUS:
                 try:
                     if isinstance(lt, str) or isinstance(rt, str):
-                        return f'{lt}{rt}'
+                        return f'{stringify(lt)}{stringify(rt)}'
 
                     return lt + rt
                 except TypeError:
