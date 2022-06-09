@@ -29,7 +29,10 @@ class INPUT(NativeFunction):
         return 1
 
     def call(self, _, arguments):
-        return input(arguments[0])
+        try:
+            return input(arguments[0])
+        except EOFError:
+            return None
 
 class CHR(NativeFunction):
     name = 'chr'
