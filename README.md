@@ -9,5 +9,14 @@
 - truthiness is implemented with python's [bool](https://docs.python.org/3/library/functions.html#bool) function ([truth testing procedure](https://docs.python.org/3/library/stdtypes.html#truth))
 - `fn` instead of `fun`
 - `let` instead of `var`
+- pox has support for else-if (see the examples folder)
 - the `print` statement doesn't exist
-  - [native functions](https://github.com/fxxf/pox/blob/main/pox/interpreter/native.py)
+
+[**built-in functions**](https://github.com/fxxf/pox/blob/main/pox/interpreter/native.py):
+- `print(expression)` prints the given string to stdout
+- `input(prompt)` [python's input function](https://docs.python.org/3/library/functions.html#input), returns `nil` on `EOFError`
+- `chr(int), ord(char)` python's [chr](https://docs.python.org/3/library/functions.html#chr) and [ord](https://docs.python.org/3/library/functions.html#ord) functions, they both return `nil` on `TypeError`
+- `str(object), int(string), float(string)` python's [str](https://docs.python.org/3/library/functions.html#str), [int](https://docs.python.org/3/library/functions.html#int) and [float](https://docs.python.org/3/library/functions.html#float) functions. `int` and `float` returns `nil` on `ValueError`
+- `strlen(string)` returns the length of a given string, `nil` if the passed argument is not a string
+- `strn(string, n)` returns the nth char of a given string, `nil` if n > len(string) or if `string` is not a string
+- `exit(value)` calls [sys.exit](https://docs.python.org/3/library/sys.html#sys.exit) with the given `value`
