@@ -13,17 +13,17 @@ fn main() {
         let n = number();
 
         // i didn't write this hideous thing by hand
-             if (n ==  0) { print('zero');    }
-        else if (n == 10) { print('ten');     }
-        else if (n == 20) { print('twenty');  }
-        else if (n == 30) { print('thirty');  }
-        else if (n == 40) { print('forty');   }
-        else if (n == 50) { print('fifty');   }
-        else if (n == 60) { print('sixty');   }
-        else if (n == 70) { print('seventy'); }
-        else if (n == 80) { print('eighty');  }
-        else if (n == 90) { print('ninety');  }
-        else              { print('idk');     }
+             if (n ==  0) { println('zero');    }
+        else if (n == 10) { println('ten');     }
+        else if (n == 20) { println('twenty');  }
+        else if (n == 30) { println('thirty');  }
+        else if (n == 40) { println('forty');   }
+        else if (n == 50) { println('fifty');   }
+        else if (n == 60) { println('sixty');   }
+        else if (n == 70) { println('seventy'); }
+        else if (n == 80) { println('eighty');  }
+        else if (n == 90) { println('ninety');  }
+        else              { println('idk');     }
 
     }
 }

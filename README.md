@@ -13,7 +13,8 @@
 - the `print` statement doesn't exist
 
 [**built-in functions**](https://github.com/fxxf/pox/blob/main/pox/interpreter/native.py):
-- `print(expression)` prints the given string to stdout
+- `print(value)` prints the given value to stdout without a trailing new line
+- `println(value)` prints the given value to stdout with a trailing new line
 - `input(prompt)` [python's input function](https://docs.python.org/3/library/functions.html#input), returns `nil` on `EOFError`
 - `chr(int), ord(char)` python's [chr](https://docs.python.org/3/library/functions.html#chr) and [ord](https://docs.python.org/3/library/functions.html#ord) functions, they both return `nil` on `TypeError`
 - `str(object), int(string), float(string)` python's [str](https://docs.python.org/3/library/functions.html#str), [int](https://docs.python.org/3/library/functions.html#int) and [float](https://docs.python.org/3/library/functions.html#float) functions. `int` and `float` returns `nil` on `ValueError`

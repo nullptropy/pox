@@ -19,7 +19,7 @@ fn sqrt(x, max) {
 }
 
 fn main() {
-    print("sqrt: " + sqrt(pow(72727, 2), 21));
+    println("sqrt: " + sqrt(pow(72727, 2), 21));
 }
 
 main();

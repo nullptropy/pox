@@ -17,5 +17,5 @@ fn fib_calculator() {
 let next = fib_calculator();
 
 for (let i = 0; i < 100; i = i + 1) {
-    print(next());
+    println(next());
 }

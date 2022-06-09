@@ -71,7 +71,7 @@ fn main() {
         list.push(i);
     }
 
-    map(print, list);
+    map(println, list);
 }
 
 main();

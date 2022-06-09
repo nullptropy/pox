@@ -25,6 +25,15 @@ class PRINT(NativeFunction):
         return 1
 
     def call(self, _, arguments):
+        print(stringify(arguments[0]), end='')
+
+class PRINTLN(NativeFunction):
+    name = 'println'
+
+    def arity(self):
+        return 1
+
+    def call(self, _, arguments):
         print(stringify(arguments[0]))
 
 class INPUT(NativeFunction):
