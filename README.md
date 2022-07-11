@@ -26,3 +26,4 @@
 - `exit(value)` calls [sys.exit](https://docs.python.org/3/library/sys.html#sys.exit) with the given `value`
 - `time()` returns the time in seconds since the epoch as a floating point number 
 - `sleep(secs)` suspend execution of the program for the given number of seconds
+- `pow(a, b)` returns `a**b`

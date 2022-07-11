@@ -19,7 +19,7 @@
 " functions
 :syntax keyword poxFunction print println input chr ord
 :syntax keyword poxFunction str int float strlen strn
-:syntax keyword poxFunction exit time sleep
+:syntax keyword poxFunction exit time sleep pow
 
 " operators
 :syntax match poxOperator "\v\*"

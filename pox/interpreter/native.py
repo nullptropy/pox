@@ -148,6 +148,15 @@ class SLEEP(NativeFunction):
         except Exception:
             pass
 
+class POW(NativeFunction):
+    name = 'pow'
+
+    def arity(self):
+        return 2
+
+    def call(self, _, arguments):
+        return pow(*arguments)
+
 class EXIT(NativeFunction):
     name = 'exit'
 
