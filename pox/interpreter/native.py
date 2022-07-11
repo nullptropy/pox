@@ -4,7 +4,7 @@ import sys
 import time
 
 from pox.utils import stringify
-from pox.interpreter.callable import PoxCallable
+from pox.interpreter.callable import PoxCallable, PoxClass, PoxInstance
 
 class NativeFunction(PoxCallable):
     name = None
@@ -157,6 +157,63 @@ class EXIT(NativeFunction):
     def call(self, _, arguments):
         sys.exit(arguments[0])
 
+def list_fn_wrapper(self, fn):
+    def _fn(*args, **kwargs):
+        try:
+            return fn(self, *args, **kwargs)
+        except:
+            return False
+
+    return _fn
+
+class ListFn(PoxCallable):
+    def __init__(self, name, arity, list):
+        self.name = name
+        self.list = list
+        self._arity = arity
+
+    def __str__(self):
+        return f'<fn {self.name}>'
+
+    def arity(self):
+        return self._arity
+
+    def call(self, *_):
+        pass
+
+class ListInstance(PoxInstance):
+    functions = [
+        (1, 'get', lambda s, _, a: s.list.data[a[0]]),
+        (1, 'add', lambda s, _, a: s.list.data.append(a[0])),
+        (1, 'pop', lambda s, _, a: s.list.data.pop(a[0])),
+        (2, 'set', lambda s, _, a: s.list.data.__setitem__(*a)),
+        (0, 'len', lambda s,   *_: len(s.list.data))]
+
+    def __init__(self, pclass):
+        self.data = []
+        self.func = {}
+
+        for (a, n, c) in self.functions:
+            self.func[n] = ListFn(n, a, self)
+            self.func[n].call = list_fn_wrapper(self.func[n], c)
+
+        super().__init__(pclass)
+
+    def get(self, name):
+        if fn := self.func.get(name.lexeme):
+            return fn
+
+        return super().get(name)
+
+class LIST(PoxClass):
+    def __init__(self):
+        super().__init__('list', None, {})
+
+    def call(self, *_):
+        return ListInstance(self)
+
 def init_native_functions(interpreter):
     for function in NativeFunction.__subclasses__():
         interpreter.globals.define(function.name, function())
+
+    interpreter.globals.define('list', LIST())
