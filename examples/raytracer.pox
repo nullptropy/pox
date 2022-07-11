@@ -1,0 +1,272 @@
+// basic raytracer that outputs to stdout (ppm)
+
+fn main() {
+    let camera_hview = 1;
+    let aspect_ratio = 4 / 3;
+    let canvas_width = 800;
+
+    let camera = Camera(Vector(0, 0, 0), aspect_ratio * camera_hview, camera_hview, 1);
+    let canvas = Canvas(canvas_width, int(canvas_width / aspect_ratio), Color(100, 149, 237));
+    let rscene = Scene(camera);
+
+    rscene.add_shape(Sphere(1, Vector(0, -1, 3), Color(255, 0, 0)));
+    rscene.add_shape(Sphere(1, Vector(-2, 0, 4), Color(0, 255, 0)));
+    rscene.add_shape(Sphere(1, Vector( 2, 0, 4), Color(0, 0, 255)));
+
+    rscene.render(canvas);
+    canvas.export();
+}
+
+class Vector {
+    init(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    len() {
+        return pow(
+            this.x * this.x +
+            this.y * this.y +
+            this.z * this.z, 0.5);
+    }
+
+    add(other) {
+        return Vector(
+            this.x + other.x,
+            this.y + other.y,
+            this.z + other.z
+        );
+    }
+
+    sub(other) {
+        return Vector(
+            this.x - other.x,
+            this.y - other.y,
+            this.z - other.z
+        );
+    }
+
+    mul(other) {
+        return Vector(
+            this.x * other,
+            this.y * other,
+            this.z * other
+        );
+    }
+
+    dot(other) {
+        return this.x * other.x +
+               this.y * other.y +
+               this.z * other.z;
+    }
+}
+
+class Color {
+    init (r, g, b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    string() {
+        return this.r + ' ' + 
+               this.g + ' ' +
+               this.b;
+    }
+
+    clamp(val) {
+        if (val > 255)
+            return 255;
+        else if (val < 0)
+            return 0;
+        else
+            return val;
+    }
+
+    add(other) {
+        return Color(
+            this.clamp(this.r + other.r),
+            this.clamp(this.g + other.g),
+            this.clamp(this.b + other.b)
+        );
+    }
+
+    sub(other) {
+        return Color(
+            this.clamp(this.r - other.r),
+            this.clamp(this.g - other.g),
+            this.clamp(this.b - other.b)
+        );
+    }
+
+    mul(other) {
+        return Color(
+            this.clamp(this.r * other),
+            this.clamp(this.g * other),
+            this.clamp(this.b * other)
+        );
+    }
+}
+
+class PPM {
+    init(w, h, color) {
+        this.w = w;
+        this.h = h;
+        this.size = w * h;
+
+        this.pixel_data = list();
+        for (let i = 0; i < this.size; i = i + 1)
+            this.pixel_data.add(color);
+    }
+
+    set_pixel(x, y, c) {
+        this.pixel_data.set(x + y * this.w, c);
+    }
+
+    export() {
+        println('P3');
+        println(this.w + ' ' + this.h);
+        println('255');
+
+        for (let i = 0; i < this.size; i = i + 1)
+            println(this.pixel_data.get(i).string());
+    }
+}
+
+class Canvas {
+    init(w, h, color) {
+        this.hw = int(w / 2);
+        this.hh = int(h / 2);
+        this.image = PPM(w, h, color);
+    }
+
+    clear(color) {
+        for (let i = 0; i < this.size; i = i + 1)
+            this.pixel_data.set(i, c);
+    }
+
+    set_pixel(x, y, c) {
+        this.image.set_pixel(
+            this.hw + x, this.hh - y, c);
+    }
+
+    export() {
+        this.image.export();
+    }
+}
+
+class Camera {
+    init(pos, vw, vh, vz) {
+        this.pos = pos;
+
+        this.vw = vw;
+        this.vh = vh;
+        this.vz = vz;
+    }
+
+    viewport_coords(x, y, canvas) {
+        return Vector(
+            x * this.vw / canvas.image.w,
+            y * this.vh / canvas.image.h,
+            this.vz
+        );
+    }
+}
+
+class HitRecord {
+    init(t, p, n, c) {
+        this.t = t;
+        this.p = p;
+        this.n = n;
+        this.c = c;
+    }
+}
+
+class Ray {
+    init(origin, direction) {
+        this.origin = origin;
+        this.direction = direction;
+    }
+
+    at(t) {
+        return this.origin.add(this.direction.mul(t));
+    }
+}
+
+class Sphere {
+    init(rad, pos, color) {
+        this.r = rad;
+        this.p = pos;
+        this.c = color;
+    }
+
+    intersect_ray(ray, t_min, t_max) {
+        let oc = ray.origin.sub(this.p);
+
+        let a = ray.direction.dot(ray.direction);
+        let h = ray.direction.dot(oc);
+        let c = oc.dot(oc) - this.r * this.r;
+        let d = h * h - a  * c;
+
+        if (d < 0)
+            return nil;
+
+        d = pow(d, 0.5);
+        let r = (-h - d) / a;
+
+        if (t_min > r or t_max < r) {
+            r = (-h + d) / a;
+            if (t_min > r or t_max < r)
+                return nil;
+        }
+
+        let p = ray.at(r);
+        let t = r;
+        let n = p.sub(this.p);
+        n = n.mul(1 / pow(n.dot(n), 0.5));
+
+        return HitRecord(t, p, n, this.c);
+    }
+}
+
+class Scene {
+    init(camera) {
+        this.camera = camera;
+        this.shapes = list();
+    }
+
+    add_shape(shape) {
+        this.shapes.add(shape);
+    }
+
+    trace_ray(ray) {
+        let closest = nil; // HitRecord
+
+        for (let i = 0; i < this.shapes.len(); i = i + 1) {
+            let sphere = this.shapes.get(i);
+            let hit = sphere.intersect_ray(ray, 0, float('inf'));
+
+            if (hit != nil and (closest == nil or hit.t < closest.t))
+                closest = hit;
+        }
+
+        return closest;
+    }
+
+    render(canvas) {
+        let camera = this.camera;
+
+        for (let x = -canvas.hw; x < canvas.hw; x = x + 1) {
+            for (let y = canvas.hh; y > -canvas.hh; y = y - 1) {
+                let ray = Ray(camera.pos, camera.viewport_coords(x, y, canvas));
+                let hit = this.trace_ray(ray);
+
+                if (hit != nil)
+                    canvas.set_pixel(x, y, hit.c);
+            }
+        }
+    }
+}
+
+main();
