@@ -12,6 +12,9 @@
 - pox has support for else-if (see the examples folder)
 - the `print` statement doesn't exist
 
+**built-in classes**:
+- [`list`](https://github.com/brkp/pox/blob/main/pox/interpreter/native.py#L184) this is a really thin wrapper around python's list type, see the source code for methods it has
+
 [**built-in functions**](https://github.com/fxxf/pox/blob/main/pox/interpreter/native.py):
 - `print(value)` prints the given value to stdout without a trailing new line
 - `println(value)` prints the given value to stdout with a trailing new line
