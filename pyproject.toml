@@ -2,7 +2,7 @@
 name = "pox"
 version = "0.1.0"
 description = "lox interpreter"
-authors = ["fxxf <fxxf@tutanota.com>"]
+authors = ["brkp <brkp@tutanota.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
