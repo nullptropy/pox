@@ -165,7 +165,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
 
-        if distance := self.locals.get(expr):
+        if (distance := self.locals.get(expr)) is not None:
             return self.environment.assign_at(distance, expr.name, value) or value
 
         return self.globals.assign(expr.name, value) or value
