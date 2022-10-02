@@ -1,8 +1,8 @@
 program
-    : decleration* EOF
+    : declaration* EOF
     ;
 
-decleration
+declaration
     : classDecl
     | funDecl
     | varDecl
@@ -57,7 +57,7 @@ whileStmt
     ;
 
 block
-    : "{" decleration "}"
+    : "{" declaration "}"
     ;
 
 expression
